@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 
-class LinksAdapter(private val itemList: ArrayList<SjLink>, private val openOperation: (String)->Unit) :
+class LinksAdapter(private val itemList: LiveData<ArrayList<SjLink>>, private val openOperation: (String)->Unit) :
     RecyclerView.Adapter<LinksViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LinksViewHolder {
@@ -17,11 +18,10 @@ class LinksAdapter(private val itemList: ArrayList<SjLink>, private val openOper
     }
 
     override fun onBindViewHolder(holder: LinksViewHolder, position: Int) {
-        holder.setLink(itemList[position],openOperation)
+        holder.setLink(itemList.value!![position],openOperation)
     }
 
-    override fun getItemCount(): Int = itemList.size
-
+    override fun getItemCount(): Int = itemList.value!!.size
 }
 
 class LinksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
