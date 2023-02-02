@@ -1,4 +1,4 @@
-package com.example.mylink
+package com.example.mylink.ui.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mylink.SjLink
 import com.example.mylink.databinding.ItemLinksBinding
 
 class LinksAdapter(private val itemList: LiveData<ArrayList<SjLink>>, private val openOperation: (String)->Unit) :
@@ -21,18 +22,18 @@ class LinksAdapter(private val itemList: LiveData<ArrayList<SjLink>>, private va
     override fun onBindViewHolder(holder: LinksViewHolder, position: Int) {
         holder.setLink(itemList.value!![position],openOperation)
     }
-
     override fun getItemCount(): Int = itemList.value!!.size
+
 }
 
-class LinksViewHolder(private val binding: ItemLinksBinding) : RecyclerView.ViewHolder(binding.root) {
+class LinksViewHolder(private val binding:ItemLinksBinding) : RecyclerView.ViewHolder(binding.root) {
     private lateinit var item: SjLink
 
     fun setLink(item: SjLink, openOperation: (String) -> Unit) {
         this.item = item
-        binding.linksItemDomainTextView.setText(item.domain.name)
+        //binding.linksItemDomainTextView.setText(item.domain.name)
         binding.linksItemNameTextView.setText(item.name)
-        binding.linksItemWebButton.setOnClickListener { openOperation(item.fullUrl) }
+        //binding.linksItemWebButton.setOnClickListener { openOperation(item.fullUrl) }
         binding.linksItemEditButton.setOnClickListener { editLink() }
         binding.linksItemDeleteButton.setOnClickListener { deleteLink() }
     }

@@ -1,7 +1,13 @@
-package com.example.mylink.data.model.db
+package com.example.mylink.data.db
 
-import com.example.mylink.SjLink
-import com.example.mylink.SjTag
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import com.example.mylink.data.LinkTagCrossRef
+import com.example.mylink.data.SjDomain
+import com.example.mylink.data.SjLink
+import com.example.mylink.data.SjTag
+import com.example.mylink.data.dao.SjDao
+
 
 @Database(entities = [SjTag::class, SjLink::class, SjDomain::class, LinkTagCrossRef::class], version = 1)
 abstract class SjDatabase : RoomDatabase() {

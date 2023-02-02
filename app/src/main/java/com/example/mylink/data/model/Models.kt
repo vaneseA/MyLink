@@ -1,4 +1,6 @@
-package com.example.mylink
+package com.example.mylink.data
+
+import androidx.room.*
 
 
 @Entity
@@ -11,7 +13,7 @@ data class SjDomain(
 @Entity
 data class SjLink(
     @PrimaryKey val lid: Int,
-    @ColumnInfo(na중me = "name") var name: String,
+    @ColumnInfo(name = "name") var name: String,
     @ColumnInfo(name = "did") val did: Int,
     @ColumnInfo(name = "url") var url: String,
 )
