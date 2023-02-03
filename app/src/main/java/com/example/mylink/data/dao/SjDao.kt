@@ -3,6 +3,7 @@ package com.example.mylink.data.dao
 import androidx.room.*
 import com.example.mylink.data.*
 
+
 @Dao
 interface SjDao {
     @Query("SELECT * FROM SjDomain")
@@ -20,7 +21,11 @@ interface SjDao {
 
     @Transaction
     @Query("SELECT * FROM SjLink")
-    fun getLinksWithTagsAndDomain():List<SjLinkWithTagsAndDomain>
+    fun getLinksAndDomain(): List<SjLinkAndDomain>
+
+//    @Transaction
+//    @Query("SELECT * FROM SjLink")
+//    fun getLinksWithTagsAndDomain():List<SjLinkWithTagsAndDomain>
 
     @Insert
     fun insertDomain(newDomain: SjDomain)
