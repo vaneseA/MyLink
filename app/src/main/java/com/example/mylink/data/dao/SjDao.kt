@@ -1,13 +1,7 @@
 package com.example.mylink.data.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import com.example.mylink.data.LinkTagCrossRef
-import com.example.mylink.data.SjDomain
-import com.example.mylink.data.SjLink
-import com.example.mylink.data.SjTag
+import androidx.room.*
+import com.example.mylink.data.*
 
 @Dao
 interface SjDao {
@@ -20,6 +14,14 @@ interface SjDao {
     @Query("SELECT * FROM SjTag")
     fun getTags(): List<SjTag>
 
+    @Transaction
+    @Query("SELECT * FROM SjLink")
+    fun getLinksWithTags(): List<SjLinkWithTags>
+
+    @Transaction
+    @Query("SELECT * FROM SjLink")
+    fun getLinksWithTagsAndDomain():List<SjLinkWithTagsAndDomain>
+
     @Insert
     fun insertDomain(newDomain: SjDomain)
 
@@ -27,18 +29,18 @@ interface SjDao {
     fun insertLinkTagCrossRef(newCrossRef: LinkTagCrossRef)
 
     @Insert
-    fun insertLink(newLink: SjLink)
+    fun insertLink(newLink:SjLink)
 
     @Insert
-    fun insertTag(newTag: SjTag)
+    fun insertTag(newTag:SjTag)
 
     @Delete
     fun deleteDomain(newDomain: SjDomain)
 
     @Delete
-    fun deleteLink(newLink: SjLink)
+    fun deleteLink(newLink:SjLink)
 
     @Delete
-    fun deleteTag(newTag: SjTag)
+    fun deleteTag(newTag:SjTag)
 
 }
