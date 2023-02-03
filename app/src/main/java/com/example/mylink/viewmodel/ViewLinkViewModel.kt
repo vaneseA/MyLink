@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mylink.SjLink
-import com.example.mylink.data.model.db.SjDatabase
+import com.example.mylink.data.SjLink
+import com.example.mylink.data.db.SjDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

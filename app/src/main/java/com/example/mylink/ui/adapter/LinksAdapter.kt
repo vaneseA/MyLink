@@ -1,14 +1,11 @@
 package com.example.mylink.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mylink.SjLink
+
+import com.example.mylink.data.SjLink
 import com.example.mylink.databinding.ItemLinksBinding
 
 class LinksAdapter(private val itemList: LiveData<ArrayList<SjLink>>, private val openOperation: (String)->Unit) :

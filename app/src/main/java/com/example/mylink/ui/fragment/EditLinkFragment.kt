@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mylink.R
-import com.example.mylink.SjLink
+import com.example.mylink.data.SjLink
 import com.example.mylink.databinding.FragmentEditLinkBinding
+
 
 class EditLinkFragment : Fragment() {
 

@@ -8,7 +8,6 @@ import com.example.mylink.data.SjLink
 import com.example.mylink.data.SjTag
 import com.example.mylink.data.dao.SjDao
 
-
 @Database(entities = [SjTag::class, SjLink::class, SjDomain::class, LinkTagCrossRef::class], version = 1)
 abstract class SjDatabase : RoomDatabase() {
     companion object {

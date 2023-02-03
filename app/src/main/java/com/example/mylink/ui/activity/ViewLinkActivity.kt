@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mylink.*
+import com.example.mylink.ui.adapter.LinksAdapter
 import com.example.mylink.viewmodel.ViewLinkViewModel
 
 class ViewLinkActivity : AppCompatActivity() {
