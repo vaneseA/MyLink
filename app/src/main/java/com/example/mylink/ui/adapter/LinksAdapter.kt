@@ -11,21 +11,10 @@ import com.example.mylink.databinding.ItemLinksBinding
 import com.example.mylink.viewmodel.ViewLinkViewModel
 
 class LinksAdapter(
-    private val viewModel: ViewLinkViewModel,
     private val openOperation: (String) -> Unit
 ) :
     RecyclerView.Adapter<LinksViewHolder>() {
-    private var itemList = ArrayList<SjLinkAndDomain>()
-
-    init {
-        viewModel.linkList.observeForever(
-            Observer {
-                itemList = viewModel.linkList.value!!
-                notifyDataSetChanged()
-            }
-        )
-        viewModel.loadDatas()
-    }
+    var itemList = ArrayList<SjLinkAndDomain>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LinksViewHolder {
         val binding = ItemLinksBinding.inflate(LayoutInflater.from(parent.context))
