@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mylink.*
 import com.example.mylink.ui.adapter.LinksAdapter
 import com.example.mylink.viewmodel.ViewLinkViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ViewLinkActivity : AppCompatActivity() {
     private val recyclerView: RecyclerView by lazy { findViewById(R.id.ViewLinkActivity_recyclerView) }
-    private val floatingButton: RecyclerView by lazy { findViewById(R.id.ViewLinkActivity_floatingActionButton) }
+    private val floatingButton: FloatingActionButton by lazy { findViewById(R.id.ViewLinkActivity_floatingActionButton) }
 
     private val viewModel: ViewLinkViewModel by viewModels()
 
