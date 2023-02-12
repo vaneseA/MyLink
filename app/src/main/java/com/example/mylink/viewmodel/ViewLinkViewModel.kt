@@ -16,7 +16,7 @@ class ViewLinkViewModel : ViewModel() {
 
     fun loadDatas() {
         viewModelScope.launch(Dispatchers.IO){
-            val dao = SjDatabase.db.getDao()
+            val dao = SjDatabase.getDao()
             val links : ArrayList<SjLinkAndDomain> =  dao.getLinksAndDomain() as ArrayList<SjLinkAndDomain>
             _linkList.postValue(links)
         }
