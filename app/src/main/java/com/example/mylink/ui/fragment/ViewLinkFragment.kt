@@ -10,10 +10,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.SjLink
+import com.example.mylink.data.SjTag
 import com.example.mylink.databinding.FragmentViewLinkBinding
-import com.example.mylink.ui.activity.EditLinkActivity
 import com.example.mylink.ui.adapter.LinksAdapter
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
+import com.example.mylink.viewmodel.ListMode
 import com.example.mylink.viewmodel.ReadLinkViewModel
 
 class ViewLinkFragment : DataBindingBasicFragment<FragmentViewLinkBinding>() {
@@ -28,34 +29,40 @@ class ViewLinkFragment : DataBindingBasicFragment<FragmentViewLinkBinding>() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val adapter = LinksAdapter(::startWebBrowser,::deleteLink)
-        viewModel.linksWithDomains.observe(this,
+        val adapter = LinksAdapter(::startWebBrowser, ::deleteLink)
+        viewModel.linkList.observe(this,
             {
-                adapter.itemList = it
-                adapter.notifyDataSetChanged()
+                if (viewModel.mode == ListMode.MODE_ALL) {
+                    adapter.itemList = it
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        )
+
+        viewModel.searchLinkList.observe(this,
+            {
+                if (viewModel.mode == ListMode.MODE_SEARCH) {
+                    adapter.itemList = it
+                    adapter.notifyDataSetChanged()
+                }
             }
         )
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
-        binding.floatingActionView.setOnClickListener { startEditActivity() }
-
         return binding.root
     }
 
-    private fun deleteLink(link: SjLink){
-        viewModel.deleteLink(link)
-    }
-    private fun editLink(){}
-    private fun shareLink(){}
-
-    private fun startEditActivity() {
-        val intent = Intent(context, EditLinkActivity::class.java)
-        startActivity(intent)
+    private fun deleteLink(link: SjLink, tags: List<SjTag>) {
+        viewModel.deleteLink(link, tags)
     }
 
-    fun startWebBrowser(url: String) {
+    private fun editLink() {}
+
+    private fun shareLink() {}
+
+    private fun startWebBrowser(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
     }

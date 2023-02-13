@@ -11,7 +11,6 @@ import androidx.fragment.app.commit
 import com.example.mylink.R
 
 abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
-
     private var _binding: T? = null
     protected val binding: T get() = _binding!!
 
@@ -29,11 +28,11 @@ abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
         _binding = null
     }
 
-    fun getClassName(): String{
+    protected fun getClassName(): String{
         return this.javaClass.canonicalName
     }
 
-    fun moveToOtherFragment(fragment:Fragment){
+    protected fun moveToOtherFragment(fragment:Fragment){
         parentFragmentManager.commit{
             replace(R.id.fragmentContainer, fragment)
             setReorderingAllowed(true)
@@ -41,9 +40,7 @@ abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
         }
     }
 
-    fun popBack(){
-        parentFragmentManager.popBackStack()
-    }
+    protected fun popBack(){ parentFragmentManager.popBackStack() }
 
     protected abstract fun layoutId(): Int
 

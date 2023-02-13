@@ -7,10 +7,9 @@ import com.google.android.material.chip.Chip
 class SjTagChip(context: Context, val tag: SjTag) : Chip(context) {
 
     init{
-        this.setText(tag.name)
+        setText(tag.name)
         isCheckable=true
         id=tag.tid
     }
-
 
 }

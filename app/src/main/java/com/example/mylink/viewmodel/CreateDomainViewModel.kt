@@ -1,13 +1,12 @@
 package com.example.mylink.viewmodel
 
-import androidx.lifecycle.ViewModel
 import com.example.mylink.data.SjDomain
-import com.example.mylink.data.repository.SjRepository
+import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 
-class CreateDomainViewModel :ViewModel(){
-    private val repository = SjRepository()
+class CreateDomainViewModel : BasicViewModelWithRepository() {
 
     fun insertDomain(newDomain: SjDomain) {
         repository.insertDomain(newDomain)
     }
+
 }

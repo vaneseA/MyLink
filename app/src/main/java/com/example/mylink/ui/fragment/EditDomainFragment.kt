@@ -29,7 +29,6 @@ class EditDomainFragment : DataBindingBasicFragment<FragmentEditDomainBinding>()
         return binding.root
     }
 
-
     private fun saveDomain() {
         viewModel.insertDomain(
             SjDomain(
@@ -37,6 +36,7 @@ class EditDomainFragment : DataBindingBasicFragment<FragmentEditDomainBinding>()
                 url = binding.urlEditText.text.toString()
             )
         )
-        parentFragmentManager.popBackStack()
+        popBack()
     }
+
 }

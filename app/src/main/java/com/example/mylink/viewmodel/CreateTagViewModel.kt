@@ -1,13 +1,12 @@
 package com.example.mylink.viewmodel
 
-import androidx.lifecycle.ViewModel
 import com.example.mylink.data.SjTag
-import com.example.mylink.data.repository.SjRepository
+import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 
-class CreateTagViewModel : ViewModel(){
-    private val repository = SjRepository()
+class CreateTagViewModel : BasicViewModelWithRepository(){
 
     fun insertTag(newTag: SjTag) {
         repository.insertTag(newTag)
     }
+
 }

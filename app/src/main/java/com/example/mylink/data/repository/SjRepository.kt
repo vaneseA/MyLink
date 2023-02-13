@@ -2,10 +2,8 @@ package com.example.mylink.data.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.example.mylink.data.LinkTagCrossRef
-import com.example.mylink.data.SjDomain
-import com.example.mylink.data.SjLink
-import com.example.mylink.data.SjTag
+import androidx.lifecycle.MutableLiveData
+import com.example.mylink.data.*
 import com.example.mylink.data.dao.SjDao
 import com.example.mylink.data.db.SjDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -13,13 +11,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class SjRepository {
-    val dao: SjDao = SjDatabase.getDao()
+class SjRepository private constructor() {
+    private val dao: SjDao = SjDatabase.getDao()
+    private var _searchLinkList= MutableLiveData<List<SjLinksAndDomainsWithTags>>()
+
     val domains: LiveData<List<SjDomain>> = dao.getAllDomains()
-    val links: LiveData<List<SjLink>> = dao.getAllLinks()
-    val linksWithDomains = SjDatabase.getDao().getLinksAndDomain()
     val tags: LiveData<List<SjTag>> = dao.getAllTags()
+    val linkList:LiveData<List<SjLinksAndDomainsWithTags>> = dao.getAllLinksAndDomainsWithTags()
+    val searchLinkList:LiveData<List<SjLinksAndDomainsWithTags>> get()= _searchLinkList
     val domainNames: LiveData<List<String>> = dao.getAllDomainNames()
+
+    companion object {
+        private val repo: SjRepository = SjRepository()
+
+        fun getInstance(): SjRepository = repo
+    }
+
+    fun searchLinksByLinkName(linkName: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            _searchLinkList.postValue(dao.searchLinksAndDomainsWithTagsByLinkName("%$linkName%"))
+        }
+    }
 
     fun insertDomain(newDomain: SjDomain) =
         CoroutineScope(Dispatchers.IO).launch {
@@ -53,10 +65,10 @@ class SjRepository {
         val linkTagCrossRefs = mutableListOf<LinkTagCrossRef>()
         for (tag in tags) {
             linkTagCrossRefs.add(LinkTagCrossRef(lid = lid, tid = tag.tid))
+            Log.d(javaClass.canonicalName, "added link cross ref lid = ${lid}, tid = ${tag.tid}")
         }
         dao.insertLinkTagCrossRefs(*linkTagCrossRefs.toTypedArray())
     }
-
 
     fun deleteDomain(domain: SjDomain) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -67,17 +79,22 @@ class SjRepository {
         }
     }
 
-    fun deleteLink(link: SjLink) {
+    fun deleteLink(link: SjLink, tags: List<SjTag>) =
         CoroutineScope(Dispatchers.IO).launch {
-            val count = dao.countLinkTagCrossRefByLid(link.lid)
-            if (count == 0) {
-                dao.deleteLink(link)
-            } else {
-                //UI에 표시하면 좋을 것 같다.
-                Log.i(javaClass.canonicalName, "link is referenced by TagCrossRef")
+
+            if (tags.isNotEmpty()) {
+                val deleteRefs = launch {
+                    val linkTagCrossRefs = mutableListOf<LinkTagCrossRef>()
+                    for (tag in tags) {
+                        linkTagCrossRefs.add(LinkTagCrossRef(lid = link.lid, tid = tag.tid))
+                    }
+                    dao.deleteLinkTagCrossRefs(*linkTagCrossRefs.toTypedArray())
+                }
+                deleteRefs.join()
             }
+            dao.deleteLink(link)
+
         }
-    }
 
     fun deleteTag(tag: SjTag) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -86,4 +103,5 @@ class SjRepository {
             //마찬가지로 확인하고, 있으면 지우지 말고 알리기
         }
     }
+
 }

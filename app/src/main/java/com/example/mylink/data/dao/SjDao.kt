@@ -12,9 +12,6 @@ interface SjDao {
     @Query("SELECT * FROM SjDomain")
     fun getAllDomains(): LiveData<List<SjDomain>>
 
-    @Query("SELECT * FROM SjLink")
-    fun getAllLinks(): LiveData<List<SjLink>>
-
     @Query("SELECT * FROM SjTag")
     fun getAllTags(): LiveData<List<SjTag>>
 
@@ -22,15 +19,15 @@ interface SjDao {
     fun getAllDomainNames(): LiveData<List<String>>
 
     @Transaction
-    @Query("SELECT * FROM SjLink")
-    fun getLinksWithTags(): List<SjLinkWithTags>
+    @Query("SELECT * FROM SjLink WHERE name LIKE :linkName")
+    fun searchLinksAndDomainsWithTagsByLinkName(linkName: String)
+            : List<SjLinksAndDomainsWithTags>
 
     @Transaction
-    @Query("SELECT * FROM SjLink")
-    fun getLinksAndDomain(): LiveData<List<SjLinkAndDomain>>
+    @Query("SELECT * FROM SjLink ORDER BY lid DESC")
+    fun getAllLinksAndDomainsWithTags()
+            : LiveData<List<SjLinksAndDomainsWithTags>>
 
-    @Query("SELECT Count(*) FROM LinkTagCrossRef WHERE lid=:lid")
-    fun countLinkTagCrossRefByLid(lid:Int): Int
 
     //insert suspend functions
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -51,10 +48,6 @@ interface SjDao {
 
     /////NOT YET TESTED//////
 
-//    @Transaction
-//    @Query("SELECT * FROM SjLink")
-//    fun getLinksWithTagsAndDomain():List<SjLinkWithTagsAndDomain>
-
     @Delete
     fun deleteDomain(newDomain: SjDomain)
 
@@ -63,5 +56,11 @@ interface SjDao {
 
     @Delete
     fun deleteTag(newTag: SjTag)
+
+    @Delete
+    suspend fun deleteTags(vararg tag: SjTag)
+
+    @Delete
+    suspend fun deleteLinkTagCrossRefs(vararg ref: LinkTagCrossRef)
 
 }
