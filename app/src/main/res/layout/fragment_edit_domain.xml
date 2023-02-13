@@ -12,6 +12,7 @@
         <TextView
             android:id="@+id/urlTextView"
             style="@style/header4"
+            android:fontFamily="@font/jalnanche"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="주소"
@@ -33,6 +34,7 @@
         <TextView
             android:id="@+id/nameTextView"
             style="@style/header4"
+            android:fontFamily="@font/jalnanche"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="15dp"
@@ -55,8 +57,12 @@
         <Button
             android:id="@+id/saveButton"
             android:layout_width="0dp"
+            android:background="@color/maincolor"
+            android:fontFamily="@font/jalnanche"
             android:layout_height="wrap_content"
             android:text="저장하기"
+            android:textColor="@color/white"
+            android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="@+id/urlEditText"
             app:layout_constraintStart_toStartOf="@+id/urlEditText"
             app:layout_constraintTop_toBottomOf="@+id/urlEditText" />
