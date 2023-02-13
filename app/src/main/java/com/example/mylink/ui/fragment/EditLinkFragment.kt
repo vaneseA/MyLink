@@ -12,27 +12,37 @@ import com.example.mylink.R
 import com.example.mylink.data.SjLink
 import com.example.mylink.databinding.FragmentEditLinkBinding
 import com.example.mylink.ui.component.SjTagChip
-import com.example.mylink.ui.fragment.basic.ViewBindingBasicFragment
-import com.example.mylink.viewmodel.ViewLinkViewModel
+import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
+import com.example.mylink.viewmodel.CreateLinkViewModel
 
 
-class EditLinkFragment : ViewBindingBasicFragment<FragmentEditLinkBinding>() {
-    private val viewModel: ViewLinkViewModel by activityViewModels()
+class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
+    private val viewModel: CreateLinkViewModel by activityViewModels()
+
     override fun layoutId(): Int = R.layout.fragment_edit_link
 
     fun setDomainDetailTextView() {
-        val builder = StringBuilder()
-        builder.append(viewModel.getDomainUrlByPosition(binding.domainSpinner.selectedItemPosition))
+        val builder = StringBuilder(viewModel.selectedDomain.url)
         builder.append(binding.linkEditText.text.toString())
         binding.domainDetailTextView.setText(builder.toString())
+        builder.clear()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //replace lifecycleOwner to this(fragment) to viewLifecycleOwner
-        //because fragment lives longer after its view was destroyed.
-        viewModel.domainNames.observe(viewLifecycleOwner, {
+        viewModel.domains.observe(viewLifecycleOwner, {
+
+            //이거 Dao에서 StringList로 받아오는 방법 혹시 찾을 수 있으면 고치면 좋겠다.
+            val nameList = mutableListOf<String>()
+            for (tag in it) {
+                nameList.add(tag.name)
+            }
+
             binding.domainSpinner.adapter =
-                ArrayAdapter(this.context!!, android.R.layout.simple_spinner_dropdown_item, it);
+                ArrayAdapter(
+                    this.context!!,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    nameList
+                );
         })
 
         viewModel.tags.observe(viewLifecycleOwner, {
@@ -49,10 +59,8 @@ class EditLinkFragment : ViewBindingBasicFragment<FragmentEditLinkBinding>() {
                     position: Int,
                     p3: Long
                 ) {
-                    val builder = StringBuilder()
-                    builder.append(viewModel.getDomainUrlByPosition(binding.domainSpinner.selectedItemPosition))
-                    builder.append(binding.linkEditText.text.toString())
-                    binding.domainDetailTextView.setText(builder.toString())
+                    viewModel.selectDomain(position)
+                    setDomainDetailTextView()
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -60,10 +68,6 @@ class EditLinkFragment : ViewBindingBasicFragment<FragmentEditLinkBinding>() {
                     binding.domainSpinner.setSelection(0)
                 }
             }
-        viewModel.loadDomainNamesAndUrls()
-        viewModel.loadTags()
-
-
 
         binding.linkEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -78,12 +82,12 @@ class EditLinkFragment : ViewBindingBasicFragment<FragmentEditLinkBinding>() {
 
         })
         binding.saveButton.setOnClickListener {
-            viewModel.insertLinks(
+            viewModel.insertLink(
                 SjLink(
-                    did = viewModel.getDomainIdByPosition(binding.domainSpinner.selectedItemPosition),
+                    did = -1,
                     name = binding.nameEditText.text.toString(),
                     url = binding.linkEditText.text.toString()
-                ), binding.tagChipGroup.checkedChipIds
+                )
             )
             requireActivity().finish()
         }
