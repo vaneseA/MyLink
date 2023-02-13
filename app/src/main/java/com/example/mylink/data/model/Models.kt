@@ -2,6 +2,10 @@ package com.example.mylink.data
 
 import androidx.room.*
 
+data class NameOnly(
+    @ColumnInfo(name = "name") var name: String
+)
+
 @Entity
 data class SjDomain(
     @PrimaryKey(autoGenerate = true) val did: Int=0,

@@ -11,9 +11,7 @@ import com.example.mylink.viewmodel.EditLinkViewModel
 
 class EditLinkActivity : AppCompatActivity() {
     private val viewModel: EditLinkViewModel by viewModels()
-
     private lateinit var binding : ActivityEditLinkBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +22,7 @@ class EditLinkActivity : AppCompatActivity() {
         supportFragmentManager.commit {
             add(R.id.activityRoot, EditLinkFragment())
             setReorderingAllowed(true)
-            addToBackStack("editLink")
+            //addToBackStack("editLink")
         }
     }
 

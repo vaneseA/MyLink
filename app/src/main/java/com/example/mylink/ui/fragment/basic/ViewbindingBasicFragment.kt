@@ -27,4 +27,8 @@ abstract class ViewBindingBasicFragment<T : ViewDataBinding> : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    fun getClassName(): String{
+        return this.javaClass.canonicalName
+    }
 }

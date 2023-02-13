@@ -37,6 +37,11 @@ class ViewLinkActivity : AppCompatActivity() {
         floatingButton.setOnClickListener { startEditActivity() }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadDatas()
+    }
+
     private fun startEditActivity(){
         startActivity(Intent(this, EditLinkActivity::class.java))
     }
