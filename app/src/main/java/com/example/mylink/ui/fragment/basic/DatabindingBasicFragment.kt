@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import com.example.mylink.R
 
 abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
 
     private var _binding: T? = null
     protected val binding: T get() = _binding!!
-    protected abstract fun layoutId(): Int
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,4 +32,19 @@ abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
     fun getClassName(): String{
         return this.javaClass.canonicalName
     }
+
+    fun moveToOtherFragment(fragment:Fragment){
+        parentFragmentManager.commit{
+            replace(R.id.fragmentContainer, fragment)
+            setReorderingAllowed(true)
+            addToBackStack(fragment.javaClass.canonicalName)
+        }
+    }
+
+    fun popBack(){
+        parentFragmentManager.popBackStack()
+    }
+
+    protected abstract fun layoutId(): Int
+
 }

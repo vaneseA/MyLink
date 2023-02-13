@@ -8,10 +8,10 @@ import com.example.mylink.data.SjTag
 import com.example.mylink.data.repository.SjRepository
 
 class CreateLinkViewModel : ViewModel() {
-
-    val repository = SjRepository()
+    private val repository = SjRepository()
     val domains: LiveData<List<SjDomain>> get() = repository.domains
     val tags: LiveData<List<SjTag>> get() = repository.tags
+    val domainNames get() = repository.domainNames
 
     val selectedTags= mutableListOf<SjTag>()
     lateinit var selectedDomain: SjDomain
@@ -20,7 +20,7 @@ class CreateLinkViewModel : ViewModel() {
         selectedDomain = domains.value!![position]
     }
 
-    fun insertLink(link: SjLink){
+    fun insertLink(link:SjLink){
         repository.insertLink(selectedDomain,link,selectedTags)
     }
 

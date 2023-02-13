@@ -18,6 +18,9 @@ interface SjDao {
     @Query("SELECT * FROM SjTag")
     fun getAllTags(): LiveData<List<SjTag>>
 
+    @Query("SELECT name FROM SjDomain")
+    fun getAllDomainNames(): LiveData<List<String>>
+
     @Transaction
     @Query("SELECT * FROM SjLink")
     fun getLinksWithTags(): List<SjLinkWithTags>
@@ -26,21 +29,24 @@ interface SjDao {
     @Query("SELECT * FROM SjLink")
     fun getLinksAndDomain(): LiveData<List<SjLinkAndDomain>>
 
+    @Query("SELECT Count(*) FROM LinkTagCrossRef WHERE lid=:lid")
+    fun countLinkTagCrossRefByLid(lid:Int): Int
 
-
-
-
+    //insert suspend functions
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertDomain(newDomain: SjDomain)
+    suspend fun insertDomain(newDomain: SjDomain)
 
     @Insert
-    fun insertLink(newLink: SjLink): Long
+    suspend fun insertLink(newLink: SjLink): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertTag(newTag: SjTag)
+    suspend fun insertTag(newTag: SjTag)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertLinkTagCrossRef(newCrossRef: LinkTagCrossRef)
+    suspend fun insertLinkTagCrossRef(newCrossRef: LinkTagCrossRef)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLinkTagCrossRefs(vararg newCrossRef: LinkTagCrossRef)
 
 
     /////NOT YET TESTED//////

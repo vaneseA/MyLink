@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
+import com.example.mylink.data.SjLink
 import com.example.mylink.databinding.FragmentViewLinkBinding
 import com.example.mylink.ui.activity.EditLinkActivity
 import com.example.mylink.ui.adapter.LinksAdapter
@@ -16,7 +17,7 @@ import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
 import com.example.mylink.viewmodel.ReadLinkViewModel
 
 class ViewLinkFragment : DataBindingBasicFragment<FragmentViewLinkBinding>() {
-    val viewModel : ReadLinkViewModel by activityViewModels()
+    val viewModel: ReadLinkViewModel by activityViewModels()
 
     override fun layoutId(): Int = R.layout.fragment_view_link
 
@@ -27,7 +28,7 @@ class ViewLinkFragment : DataBindingBasicFragment<FragmentViewLinkBinding>() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val adapter = LinksAdapter(::startWebBrowser)
+        val adapter = LinksAdapter(::startWebBrowser,::deleteLink)
         viewModel.linksWithDomains.observe(this,
             {
                 adapter.itemList = it
@@ -42,6 +43,12 @@ class ViewLinkFragment : DataBindingBasicFragment<FragmentViewLinkBinding>() {
 
         return binding.root
     }
+
+    private fun deleteLink(link: SjLink){
+        viewModel.deleteLink(link)
+    }
+    private fun editLink(){}
+    private fun shareLink(){}
 
     private fun startEditActivity() {
         val intent = Intent(context, EditLinkActivity::class.java)
