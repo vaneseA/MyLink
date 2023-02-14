@@ -8,9 +8,18 @@ import com.example.mylink.ui.fragment.EditLinkFragment
 
 
 class EditLinkActivity : ViewBindingBasicActivity<ActivityEditLinkBinding>() {
+
     override fun viewBindingInflate(inflater: LayoutInflater): ActivityEditLinkBinding =
         ActivityEditLinkBinding.inflate(layoutInflater)
 
-    override fun homeFragment(): Fragment = EditLinkFragment()
+    override fun homeFragment(): Fragment {
+        val lid = intent.getIntExtra("lid", -1)
+        return if (lid == -1) {
+            EditLinkFragment()
+        } else {
+            EditLinkFragment.newInstance(lid)
+            // UpdateLinkFragment.newInstance(lid)
+        }
+    }
 
 }

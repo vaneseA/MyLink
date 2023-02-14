@@ -13,4 +13,5 @@
     <color name="whitegray">#F7F5F5F7</color>
     <color name="gray">#FF999999</color>
     <color name="maincolor">#FB5762</color>
+    <color name="light_gray">#C4C4C4</color>
 </resources>

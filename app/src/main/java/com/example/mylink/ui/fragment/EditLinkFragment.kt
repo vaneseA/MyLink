@@ -13,40 +13,51 @@ import com.example.mylink.R
 import com.example.mylink.data.model.SjLink
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentEditLinkBinding
+import com.example.mylink.ui.adapter.DomainAdapter
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
 import com.example.mylink.viewmodel.CreateLinkViewModel
+import com.example.mylink.viewmodel.NameMode
 
 
 class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
     private val viewModel: CreateLinkViewModel by activityViewModels()
 
-    override fun layoutId(): Int = R.layout.fragment_edit_link
-
-    fun setDomainDetailTextView() {
-        val builder = StringBuilder(viewModel.getSelectedDomainName())
-        builder.append(binding.linkEditText.text.toString())
-        binding.domainDetailTextView.setText(builder.toString())
-        builder.clear()
+    companion object {
+        fun newInstance(lid: Int): EditLinkFragment {
+            val bundle = Bundle().apply {
+                putInt("lid", lid)
+            }
+            val fragment = EditLinkFragment().apply {
+                arguments = bundle
+            }
+            return fragment
+        }
     }
+
+
+    override fun layoutId(): Int = R.layout.fragment_edit_link
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        viewModel.domainNames.observe(viewLifecycleOwner, {
-            binding.domainSpinner.adapter =
-                ArrayAdapter(
-                    this.context!!,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    it
-                )
-        })
+        if (arguments != null) {
+            val lid = requireArguments().getInt("lid")
+            viewModel.setLink(lid)
+        }
 
-        viewModel.tags.observe(
-            viewLifecycleOwner,
-            { addTagsToChipGroupChildren(it) }
-        )
+        //set data binding variable
+        binding.viewModel = viewModel
 
+        //add tag chips
+        viewModel.tags.observe(viewLifecycleOwner, { addTagsToChipGroupChildren(it) })
+
+        //when domain list changes
         viewModel.domains.observe(viewLifecycleOwner, {
+            //set spinner adapter
+            binding.domainSpinner.adapter =
+                DomainAdapter(context = requireContext(), list = it)
+
+            //set spinner select listener
             binding.domainSpinner.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
 
@@ -57,27 +68,27 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
                         p3: Long
                     ) {
                         viewModel.selectDomain(position)
-                        setDomainDetailTextView()
                     }
 
-                    override fun onNothingSelected(p0: AdapterView<*>?) {
-                        Log.i(getClassName(), "domainSpinner select is null")
-                        binding.domainSpinner.setSelection(0)
-                    }
-
+                    override fun onNothingSelected(p0: AdapterView<*>?) {}
                 }
-        })
 
-        //textChangeListeners= 에딧텍스트 수정할 때 textView에 표시해주는.
-        binding.linkEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                setDomainDetailTextView()
+            //set selection if there is selected Domain
+            val domain = viewModel.getSelectedDomain()
+            if (domain.did != 0) {
+                val index = it!!.indexOf(domain)
+                binding.domainSpinner.setSelection(index)
             }
-
-            override fun afterTextChanged(p0: Editable?) {}
         })
 
+
+
+        binding.nameEditText.setOnKeyListener { p0, p1, p2 ->
+            viewModel.mode = NameMode.MODE_USER
+            false
+        }
+
+        //onClickListeners
         binding.saveButton.setOnClickListener { saveLink() }
         binding.addDomainTextView.setOnClickListener { moveToEditDomainFragment() }
         binding.addTagTextView.setOnClickListener { moveToEditTagFragment() }
@@ -87,15 +98,17 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
         binding.tagChipGroup.removeAllViews()
         val onCheckListener = CompoundButton.OnCheckedChangeListener { btn, isChecked ->
             val chip = btn as SjTagChip
-            if(isChecked){
-                viewModel.selectedTags.add(chip.tag)
-            }else{
-                viewModel.selectedTags.remove(chip.tag)
+            if (isChecked) {
+                viewModel.selectTag(chip.tag)
+            } else {
+                viewModel.unselectTag(chip.tag)
             }
         }
 
         for (tag in it) {
             val chip = SjTagChip(context!!, tag)
+            if (viewModel.targetTagList.contains(tag))
+                chip.isChecked = true
             chip.setOnCheckedChangeListener(onCheckListener)
             binding.tagChipGroup.addView(chip)
         }
@@ -110,13 +123,7 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
     }
 
     private fun saveLink() {
-        viewModel.insertLink(
-            SjLink(
-                did = -1,
-                name = binding.nameEditText.text.toString(),
-                url = binding.linkEditText.text.toString()
-            )
-        )
+        viewModel.insertLink()
         this.requireActivity().finish()
     }
 

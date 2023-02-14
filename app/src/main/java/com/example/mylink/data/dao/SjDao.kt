@@ -57,6 +57,10 @@ interface SjDao {
     suspend fun insertSearchTagCrossRefs(vararg ref: SearchTagCrossRef)
 
 
+    @Update
+    fun updateLink(link: SjLink)
+
+
     /////NOT YET TESTED//////
 
     @Delete
@@ -79,6 +83,13 @@ interface SjDao {
 
     @Query("Delete FROM SjSearch")
     fun deleteAllSearch()
+
+    @Transaction
+    @Query("SELECT * FROM SjLink WHERE lid = :lid")
+    fun getLinkAndDomainWithTagsByLid(lid: Int): SjLinksAndDomainsWithTags
+
+    @Query("DELETE FROM LinkTagCrossRef WHERE lid= :lid")
+    fun deleteLinkTagCrossRefsByLid(lid: Int)
 
 
 }
