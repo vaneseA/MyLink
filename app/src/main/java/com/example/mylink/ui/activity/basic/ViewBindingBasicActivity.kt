@@ -25,6 +25,16 @@ abstract class ViewBindingBasicActivity<T : ViewBinding> : AppCompatActivity() {
             setReorderingAllowed(true)
         }
     }
+
     abstract fun viewBindingInflate(inflater: LayoutInflater): T
+
     abstract fun homeFragment(): Fragment
+    protected fun moveToFragment(fragment: Fragment){
+        supportFragmentManager.commit {
+            replace(R.id.fragmentContainer, fragment)
+            setReorderingAllowed(true)
+            addToBackStack(fragment.javaClass.name)
+        }
+    }
+
 }

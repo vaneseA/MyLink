@@ -7,18 +7,26 @@
         <entry key="app/src/main/res/drawable-v24/ic_baseline_edit_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_baseline_share_24.xml" value="0.157" />
         <entry key="app/src/main/res/drawable-v24/ic_baseline_web_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_link_24.xml" value="0.1565" />
         <entry key="app/src/main/res/drawable/ic_baseline_announcement_24.xml" value="0.101" />
+        <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_edit_link.xml" value="0.21822916666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1625" />
         <entry key="app/src/main/res/layout/activity_share_link.xml" value="0.203125" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/activity_view_link.xml" value="0.2175925925925926" />
         <entry key="app/src/main/res/layout/fragment_edit_domain.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_edit_link.xml" value="0.20565552699228792" />
         <entry key="app/src/main/res/layout/fragment_edit_tag.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_empty.xml" value="0.203125" />
+        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_view_link.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/include_empty.xml" value="0.14739583333333334" />
         <entry key="app/src/main/res/layout/item_links.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_search_set.xml" value="0.203125" />
+        <entry key="app/src/main/res/layout/layout_search_set.xml" value="0.203125" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
       </map>
     </option>
   </component>

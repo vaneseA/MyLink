@@ -6,15 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import com.example.mylink.data.*
 import com.example.mylink.data.dao.SjDao
 import com.example.mylink.data.db.SjDatabase
+import com.example.mylink.data.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class SjRepository private constructor() {
+
     private val dao: SjDao = SjDatabase.getDao()
     private var _searchLinkList= MutableLiveData<List<SjLinksAndDomainsWithTags>>()
 
+    val searches:LiveData<List<SjSearchWithTags>> =  dao.getAllSearch()
     val domains: LiveData<List<SjDomain>> = dao.getAllDomains()
     val tags: LiveData<List<SjTag>> = dao.getAllTags()
     val linkList:LiveData<List<SjLinksAndDomainsWithTags>> = dao.getAllLinksAndDomainsWithTags()
@@ -96,6 +99,14 @@ class SjRepository private constructor() {
 
         }
 
+    fun deleteSearch() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val job = launch{dao.deleteAllSearchTagCrossRefs()}
+            job.join()
+            dao.deleteAllSearch()
+        }
+    }
+
     fun deleteTag(tag: SjTag) {
         CoroutineScope(Dispatchers.IO).launch {
             dao.deleteTag(tag)
@@ -103,5 +114,27 @@ class SjRepository private constructor() {
             //마찬가지로 확인하고, 있으면 지우지 말고 알리기
         }
     }
+
+    fun saveSearchAndTags(newSearch: SjSearch, selectedTags: MutableList<SjTag>) {
+        CoroutineScope(Dispatchers.IO).launch{
+            val sid = async{insertSearch(newSearch)}
+            insertSearchTagCrossReff(sid.await(),selectedTags)
+        }
+    }
+
+    private suspend fun insertSearch(newSearch:SjSearch):Int{
+        return dao.insertSearch(newSearch).toInt()
+    }
+
+    private suspend fun insertSearchTagCrossReff(sid:Int, tags: MutableList<SjTag>){
+        val searchTagCrossRefs = mutableListOf<SearchTagCrossRef>()
+        for (tag in tags) {
+            searchTagCrossRefs.add(SearchTagCrossRef(sid = sid, tid = tag.tid))
+            Log.d(javaClass.canonicalName, "added link cross ref sid = ${sid}, tid = ${tag.tid}")
+        }
+        dao.insertSearchTagCrossRefs(*searchTagCrossRefs.toTypedArray())
+    }
+
+
 
 }

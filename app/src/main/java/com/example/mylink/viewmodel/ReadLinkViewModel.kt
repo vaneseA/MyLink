@@ -1,7 +1,8 @@
 package com.example.mylink.viewmodel
 
-import com.example.mylink.data.SjLink
-import com.example.mylink.data.SjTag
+import android.util.Log
+import com.example.mylink.data.model.SjLink
+import com.example.mylink.data.model.SjTag
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 
 class ReadLinkViewModel : BasicViewModelWithRepository() {
@@ -15,6 +16,7 @@ class ReadLinkViewModel : BasicViewModelWithRepository() {
 
     fun searchLinkByLinkName(linkName: String) {
         this.mode = ListMode.MODE_SEARCH
+        Log.i("mode changed",mode.name)
         repository.searchLinksByLinkName(linkName)
     }
 }

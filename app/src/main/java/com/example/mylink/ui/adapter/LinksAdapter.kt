@@ -4,15 +4,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mylink.data.SjLink
-import com.example.mylink.data.SjLinksAndDomainsWithTags
-import com.example.mylink.data.SjTag
+import com.example.mylink.data.model.SjLink
+import com.example.mylink.data.model.SjLinksAndDomainsWithTags
+import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.ItemLinksBinding
 
 
 class LinksAdapter(
     private val openOperation: (String) -> Unit,
-    private val deleteOperation: (SjLink,List<SjTag>) -> Unit
+    private val deleteOperation: (SjLink, List<SjTag>) -> Unit
 ) :
     RecyclerView.Adapter<LinksViewHolder>() {
     var itemList: List<SjLinksAndDomainsWithTags> = listOf()

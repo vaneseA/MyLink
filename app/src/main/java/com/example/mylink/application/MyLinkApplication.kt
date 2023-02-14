@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class LinkSaverApplication : Application() {
+class MyLinkApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 

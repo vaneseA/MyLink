@@ -5,14 +5,19 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.mylink.data.LinkTagCrossRef
-import com.example.mylink.data.SjDomain
-import com.example.mylink.data.SjLink
-import com.example.mylink.data.SjTag
+import com.example.mylink.data.*
 import com.example.mylink.data.dao.SjDao
+import com.example.mylink.data.model.*
 
 @Database(
-    entities = [SjTag::class, SjLink::class, SjDomain::class, LinkTagCrossRef::class],
+    entities = [
+        SjTag::class,
+        SjLink::class,
+        SjDomain::class,
+        LinkTagCrossRef::class,
+        SjSearch::class,
+        SearchTagCrossRef::class
+    ],
     version = 1
 )
 abstract class SjDatabase : RoomDatabase() {

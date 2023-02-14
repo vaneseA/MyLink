@@ -10,8 +10,8 @@ import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import androidx.fragment.app.activityViewModels
 import com.example.mylink.R
-import com.example.mylink.data.SjLink
-import com.example.mylink.data.SjTag
+import com.example.mylink.data.model.SjLink
+import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentEditLinkBinding
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
@@ -24,7 +24,7 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
     override fun layoutId(): Int = R.layout.fragment_edit_link
 
     fun setDomainDetailTextView() {
-        val builder = StringBuilder(viewModel.selectedDomain.url)
+        val builder = StringBuilder(viewModel.getSelectedDomainName())
         builder.append(binding.linkEditText.text.toString())
         binding.domainDetailTextView.setText(builder.toString())
         builder.clear()

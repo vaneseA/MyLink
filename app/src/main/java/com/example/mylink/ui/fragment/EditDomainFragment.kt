@@ -6,7 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.mylink.R
-import com.example.mylink.data.SjDomain
+import com.example.mylink.data.model.SjDomain
+
 import com.example.mylink.databinding.FragmentEditDomainBinding
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
 import com.example.mylink.viewmodel.CreateDomainViewModel
