@@ -21,9 +21,11 @@
         <entry key="app/src/main/res/layout/fragment_edit_tag.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_empty.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.203125" />
+        <entry key="app/src/main/res/layout/fragment_view_domain.xml" value="0.23333333333333334" />
         <entry key="app/src/main/res/layout/fragment_view_link.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_view_tag.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/include_empty.xml" value="0.14739583333333334" />
+        <entry key="app/src/main/res/layout/item_domains.xml" value="0.23333333333333334" />
         <entry key="app/src/main/res/layout/item_links.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_search_set.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/layout_search_set.xml" value="0.203125" />

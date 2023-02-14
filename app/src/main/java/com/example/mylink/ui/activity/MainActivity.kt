@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.mylink.R
 import com.example.mylink.databinding.ActivityMainBinding
 import com.example.mylink.ui.activity.basic.ViewBindingBasicActivity
+import com.example.mylink.ui.fragment.ViewDomainFragment
 import com.example.mylink.ui.fragment.ViewLinkFragment
 import com.example.mylink.ui.fragment.ViewTagFragment
 import com.example.mylink.viewmodel.ReadLinkViewModel
@@ -15,6 +16,7 @@ class MainActivity : ViewBindingBasicActivity<ActivityMainBinding>() {
     val viewModel: ReadLinkViewModel by viewModels()
     private val homeFragment = ViewLinkFragment()
     private val tagFragment = ViewTagFragment()
+    private val domainFragment = ViewDomainFragment()
 
     override fun viewBindingInflate(inflater: LayoutInflater): ActivityMainBinding =
         ActivityMainBinding.inflate(inflater)
@@ -30,6 +32,7 @@ class MainActivity : ViewBindingBasicActivity<ActivityMainBinding>() {
                     true
                 }
                 R.id.domainItem-> {
+                    this.replaceFragmentTo(domainFragment)
                     true
                 }
                 R.id.tagItem-> {

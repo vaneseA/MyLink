@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.mylink.viewmodel.CreateLinkViewModel" />
+            type="com.example.mylink.viewmodel.LinkViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

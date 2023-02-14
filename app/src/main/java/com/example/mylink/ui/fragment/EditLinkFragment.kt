@@ -1,27 +1,22 @@
 package com.example.mylink.ui.fragment
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import androidx.fragment.app.activityViewModels
 import com.example.mylink.R
-import com.example.mylink.data.model.SjLink
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentEditLinkBinding
 import com.example.mylink.ui.adapter.DomainAdapter
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
-import com.example.mylink.viewmodel.CreateLinkViewModel
+import com.example.mylink.viewmodel.LinkViewModel
 import com.example.mylink.viewmodel.NameMode
 
 
 class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
-    private val viewModel: CreateLinkViewModel by activityViewModels()
+    private val viewModel: LinkViewModel by activityViewModels()
 
     companion object {
         fun newInstance(lid: Int): EditLinkFragment {
@@ -123,7 +118,7 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
     }
 
     private fun saveLink() {
-        viewModel.insertLink()
+        viewModel.saveLink()
         this.requireActivity().finish()
     }
 

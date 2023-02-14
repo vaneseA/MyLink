@@ -12,20 +12,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
-import com.example.mylink.data.model.SjSearch
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentSearchBinding
+import com.example.mylink.ui.adapter.SearchesAdapter
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
 import com.example.mylink.viewmodel.ReadLinkViewModel
-import com.example.mylink.viewmodel.SearchViewModel
-import com.github.yeeun_yun97.toy.linksaver.ui.adapter.SearchesAdapter
-
 
 class SearchFragment : DataBindingBasicFragment<FragmentSearchBinding>() {
-
-    val viewModel: SearchViewModel by activityViewModels()
-    val readLinkViewModel: ReadLinkViewModel by activityViewModels()
+    val viewModel: ReadLinkViewModel by activityViewModels()
 
     override fun layoutId(): Int = R.layout.fragment_search
 
@@ -99,9 +94,14 @@ class SearchFragment : DataBindingBasicFragment<FragmentSearchBinding>() {
     }
 
     private fun search(keyword: String) {
-        readLinkViewModel.searchLinkByLinkName(keyword)
-        viewModel.saveSearch(SjSearch(keyword = keyword))
+        viewModel.searchLinkBySearchSet(keyword)
         popBack()
     }
 
 }
+
+
+
+
+
+
