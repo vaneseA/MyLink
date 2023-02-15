@@ -1,107 +1,90 @@
 package com.example.mylink.ui.fragment
 
-import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
-import android.widget.TextView
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentSearchBinding
-import com.example.mylink.ui.adapter.SearchesAdapter
+import com.example.mylink.ui.adapter.RecyclerSearchAdapter
 import com.example.mylink.ui.component.SjTagChip
-import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
+import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.ReadLinkViewModel
 
-class SearchFragment : DataBindingBasicFragment<FragmentSearchBinding>() {
+class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
     val viewModel: ReadLinkViewModel by activityViewModels()
 
+    // override methods
     override fun layoutId(): Int = R.layout.fragment_search
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
+    override fun onCreateView() {
+        //set binding
+        binding.viewModel = viewModel
+
+        // set focus
         binding.searchEditText.requestFocus()
 
-        viewModel.tagList.observe(viewLifecycleOwner, Observer {
-            val onCheckedListener = object : CompoundButton.OnCheckedChangeListener {
-                override fun onCheckedChanged(btn: CompoundButton?, isChecked: Boolean) {
-                    val chip = btn as SjTagChip
-                    if (isChecked) {
-                        viewModel.selectedTags.add(chip.tag)
-                    } else {
-                        viewModel.selectedTags.remove(chip.tag)
-                    }
+        // chip check listener
+        val onCheckedListener =
+            CompoundButton.OnCheckedChangeListener { btn, isChecked ->
+                val chip = btn as SjTagChip
+                if (isChecked) {
+                    viewModel.selectedTags.add(chip.tag)
+                } else {
+                    viewModel.selectedTags.remove(chip.tag)
                 }
             }
+
+        // set tag list
+        viewModel.tagList.observe(viewLifecycleOwner, {
             binding.tagChipGroup.removeAllViews()
             for (tag in it) {
-                val tag = SjTagChip(requireContext(), tag)
-                tag.setOnCheckedChangeListener(onCheckedListener)
-                binding.tagChipGroup.addView(tag)
+                val chip = SjTagChip(requireContext(), tag)
+                chip.setOnCheckedChangeListener(onCheckedListener)
+                binding.tagChipGroup.addView(chip)
             }
         })
 
-        binding.searchEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-            override fun onEditorAction(
-                TextView: TextView?,
-                actionId: Int,
-                keyEvent: KeyEvent?
-            ): Boolean {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    search(binding.searchEditText.text.toString())
-                }
-                return false
+        // user input enter(action search) -> search start.
+        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                searchAndPopBack()
             }
-        })
+            false
+        }
 
-
-
+        // set recyclerview search set
         binding.recentSearchedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = SearchesAdapter(::setSearch)
+        val adapter = RecyclerSearchAdapter(::setSearch)
         binding.recentSearchedRecyclerView.adapter = adapter
         viewModel.searchList.observe(viewLifecycleOwner,
             {
-                adapter.itemList = it
-                adapter.notifyDataSetChanged()
+                adapter.setList(it)
             }
         )
 
-
-        binding.deleteImageView.setOnClickListener { deleteAllSearch() }
-        binding.deleteTextView.setOnClickListener { deleteAllSearch() }
-        return binding.root
+        // handle user click event
+        binding.deleteImageView.setOnClickListener { deleteAllSearchSet() }
+        binding.deleteTextView.setOnClickListener { deleteAllSearchSet() }
     }
 
-    private fun deleteAllSearch(){
+    //handle user click methods
+    private fun deleteAllSearchSet() {
         viewModel.deleteAllSearch()
     }
 
     private fun setSearch(keyword: String, tags: List<SjTag>) {
+        viewModel.searchWord.postValue(keyword)
         viewModel.selectedTags.clear()
-        binding.tagChipGroup.clearCheck()
         viewModel.selectedTags.addAll(tags)
-        this.search(keyword)
+        this.searchAndPopBack()
     }
 
-    private fun search(keyword: String) {
-        viewModel.searchLinkBySearchSet(keyword)
+    private fun searchAndPopBack() {
+        viewModel.searchLinkBySearchSet()
         popBack()
     }
 
 }
-
-
-
-
-
-

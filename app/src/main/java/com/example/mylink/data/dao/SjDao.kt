@@ -2,8 +2,8 @@ package com.example.mylink.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.example.mylink.data.db.SjDatabase
 import com.example.mylink.data.model.*
-
 
 
 @Dao
@@ -23,6 +23,9 @@ interface SjDao {
     @Query("SELECT * FROM SjLink ORDER BY lid DESC")
     fun getAllLinksAndDomainsWithTags()
             : LiveData<List<SjLinksAndDomainsWithTags>>
+
+    @Query("SELECT COUNT(*) FROM SjDomain")
+    suspend fun getDomainCount(): Int
 
 
     // search link query by link name and tags

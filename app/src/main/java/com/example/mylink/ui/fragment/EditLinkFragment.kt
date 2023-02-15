@@ -8,14 +8,15 @@ import androidx.fragment.app.activityViewModels
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentEditLinkBinding
-import com.example.mylink.ui.adapter.DomainAdapter
+import com.example.mylink.ui.adapter.SpinnerDomainAdapter
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
+import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.LinkViewModel
 import com.example.mylink.viewmodel.NameMode
 
 
-class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
+class EditLinkFragment : SjBasicFragment<FragmentEditLinkBinding>() {
     private val viewModel: LinkViewModel by activityViewModels()
 
     companion object {
@@ -31,18 +32,20 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
     }
 
 
+    // override methods
     override fun layoutId(): Int = R.layout.fragment_edit_link
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    // load and set update data
+    private fun loadUpdateData(arguments: Bundle) {
+        val lid = arguments.getInt("lid")
+        viewModel.setLink(lid)
+    }
 
-        if (arguments != null) {
-            val lid = requireArguments().getInt("lid")
-            viewModel.setLink(lid)
-        }
-
-        //set data binding variable
+    override fun onCreateView() {
         binding.viewModel = viewModel
-
+        if (arguments != null) {
+            loadUpdateData(arguments!!)
+        }
         //add tag chips
         viewModel.tags.observe(viewLifecycleOwner, { addTagsToChipGroupChildren(it) })
 
@@ -50,7 +53,7 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
         viewModel.domains.observe(viewLifecycleOwner, {
             //set spinner adapter
             binding.domainSpinner.adapter =
-                DomainAdapter(context = requireContext(), list = it)
+                SpinnerDomainAdapter(context = requireContext(), list = it)
 
             //set spinner select listener
             binding.domainSpinner.onItemSelectedListener =
@@ -77,17 +80,19 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
         })
 
 
-
-        binding.nameEditText.setOnKeyListener { p0, p1, p2 ->
+        // mode change when user edits name
+        binding.nameEditText.setOnKeyListener { _, _, _ ->
             viewModel.mode = NameMode.MODE_USER
             false
         }
 
-        //onClickListeners
+
+        // handle user click
         binding.saveButton.setOnClickListener { saveLink() }
         binding.addDomainTextView.setOnClickListener { moveToEditDomainFragment() }
         binding.addTagTextView.setOnClickListener { moveToEditTagFragment() }
     }
+
 
     private fun addTagsToChipGroupChildren(it: List<SjTag>) {
         binding.tagChipGroup.removeAllViews()
@@ -109,6 +114,7 @@ class EditLinkFragment : DataBindingBasicFragment<FragmentEditLinkBinding>() {
         }
     }
 
+    // handle click methods
     private fun moveToEditTagFragment() {
         moveToOtherFragment(EditTagFragment())
     }

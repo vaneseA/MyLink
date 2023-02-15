@@ -9,9 +9,10 @@ import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentEditTagBinding
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
+import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.TagViewModel
 
-class EditTagFragment : DataBindingBasicFragment<FragmentEditTagBinding>() {
+class EditTagFragment : SjBasicFragment<FragmentEditTagBinding>() {
     val viewModel: TagViewModel by viewModels()
 
     companion object {
@@ -24,25 +25,32 @@ class EditTagFragment : DataBindingBasicFragment<FragmentEditTagBinding>() {
         }
     }
 
+
+    // override methods
     override fun layoutId(): Int = R.layout.fragment_edit_tag
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        binding.viewModel=viewModel
-        if(arguments!=null){
-            val tid = arguments!!.getInt("tid")
-            viewModel.setTag(tid)
+    override fun onCreateView() {
+        binding.viewModel = viewModel
+        if (arguments != null) {
+            loadUpdateData(arguments!!)
         }
+
+        //set focus
         binding.nameEdtiText.requestFocus()
-        binding.saveButton.setOnClickListener { insertTag() }
-        return binding.root
+
+        // handle user click event
+        binding.saveButton.setOnClickListener { saveTag() }
     }
 
-    private fun insertTag() {
+
+    // load and set update data
+    private fun loadUpdateData(arguments: Bundle) {
+        val tid = arguments.getInt("tid")
+        viewModel.setTag(tid)
+    }
+
+    // save Tag
+    private fun saveTag() {
         viewModel.saveTag()
         popBack()
     }

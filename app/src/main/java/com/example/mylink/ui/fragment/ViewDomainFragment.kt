@@ -1,52 +1,54 @@
 package com.example.mylink.ui.fragment
 
-import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjDomain
 import com.example.mylink.databinding.FragmentViewDomainBinding
-import com.example.mylink.ui.adapter.DomainsAdapter
+import com.example.mylink.ui.adapter.RecyclerDomainAdapter
 import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
+import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.DomainViewModel
 
-class ViewDomainFragment :DataBindingBasicFragment<FragmentViewDomainBinding>(){
-    val viewModel : DomainViewModel by activityViewModels()
+class ViewDomainFragment : SjBasicFragment<FragmentViewDomainBinding>() {
+    val viewModel: DomainViewModel by activityViewModels()
 
-    override fun layoutId(): Int  = R.layout.fragment_view_domain
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    // override methods
+    override fun layoutId(): Int = R.layout.fragment_view_domain
 
-        val adapter = DomainsAdapter(
-            listOf(),
+    override fun onCreateView() {
+        // set recyclerView
+        val adapter = RecyclerDomainAdapter(
             ::moveToEditDomainFragment,
             ::deleteDomain
         )
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
 
+        // set domain item list
         viewModel.domains.observe(
-            viewLifecycleOwner,{
-                if(it.isEmpty()){
-                    binding.include.emptyView.visibility=View.VISIBLE
-                }else{
-                    binding.include.emptyView.visibility=View.GONE
+            viewLifecycleOwner, {
+                if (it.isEmpty()) {
+                    binding.include.emptyView.visibility = View.VISIBLE
+                } else {
+                    binding.include.emptyView.visibility = View.GONE
                 }
                 adapter.setList(it)
             }
         )
-
-        binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter=adapter
     }
 
-    private fun moveToEditDomainFragment(did: Int){
+
+    // handle user click event
+    private fun moveToEditDomainFragment(did: Int) {
         val fragment = EditDomainFragment.newInstance(did)
         moveToOtherFragment(fragment)
     }
-    private fun deleteDomain(domain:SjDomain){
+
+    private fun deleteDomain(domain: SjDomain) {
         viewModel.deleteDomain(domain)
     }
-
 
 }

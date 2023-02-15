@@ -3,9 +3,8 @@ package com.example.mylink.application
 import android.app.Application
 import androidx.room.Room
 import com.example.mylink.data.db.SjDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.example.mylink.data.model.SjDomain
+import kotlinx.coroutines.*
 
 class MyLinkApplication : Application() {
     override fun onCreate() {
@@ -15,8 +14,14 @@ class MyLinkApplication : Application() {
         SjDatabase.openDatabase(applicationContext)
 
         //insert initial Data
-        GlobalScope.launch(Dispatchers.IO) {
-            //SjDatabase.insertFirstData()
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val count = async {
+                SjDatabase.getDao().getDomainCount()
+            }
+            if (count.await() == 0) {
+                SjDatabase.getDao().insertDomain(SjDomain(name = "빈 도메인", url = ""))
+            }
         }
     }
 

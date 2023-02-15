@@ -1,5 +1,6 @@
 package com.example.mylink.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import com.example.mylink.data.model.SjLink
 import com.example.mylink.data.model.SjSearch
 import com.example.mylink.data.model.SjTag
@@ -20,6 +21,9 @@ class ReadLinkViewModel : BasicViewModelWithRepository() {
     // mode
     var mode: ListMode = ListMode.MODE_ALL
 
+    // data binding liveData
+    val searchWord = MutableLiveData<String>()
+
     // selected tags for search
     var selectedTags = mutableListOf<SjTag>()
 
@@ -31,13 +35,15 @@ class ReadLinkViewModel : BasicViewModelWithRepository() {
 
 
     // search methods
-    fun searchLinkBySearchSet(keyword: String) {
-        if (keyword.isEmpty() && selectedTags.isEmpty()) {
+    fun searchLinkBySearchSet() {
+        val keyword= searchWord.value
+        if (keyword.isNullOrEmpty() && selectedTags.isEmpty()) {
             this.mode = ListMode.MODE_ALL
         } else {
             this.mode = ListMode.MODE_SEARCH
-            repository.searchLinksBySearchSet(keyword, selectedTags)
-            saveSearch(keyword)
+            val searchWord = keyword ?: ""
+            repository.searchLinksBySearchSet(searchWord, selectedTags)
+            saveSearch(searchWord)
         }
     }
 

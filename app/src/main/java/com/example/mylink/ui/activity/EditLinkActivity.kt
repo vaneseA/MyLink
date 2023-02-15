@@ -18,7 +18,6 @@ class EditLinkActivity : ViewBindingBasicActivity<ActivityEditLinkBinding>() {
             EditLinkFragment()
         } else {
             EditLinkFragment.newInstance(lid)
-            // UpdateLinkFragment.newInstance(lid)
         }
     }
 
