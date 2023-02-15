@@ -9,6 +9,9 @@ import com.example.mylink.data.model.*
 @Dao
 interface SjDao {
     // get All Entities from Database
+    @Query("SELECT * FROM SjDomain WHERE did NOT IN (1)")
+    fun getAllDomainsExceptDefault(): LiveData<List<SjDomain>>
+
     @Query("SELECT * FROM SjDomain")
     fun getAllDomains(): LiveData<List<SjDomain>>
 
@@ -42,6 +45,13 @@ interface SjDao {
         keyword: String, tags: List<Int>
     ): List<SjLinksAndDomainsWithTags>
 
+    // search link query by link name
+    @Transaction
+    @Query("SELECT * FROM SjLink WHERE name LIKE :keyword")
+    suspend fun searchLinksAndDomainsWithTagsByLinkName(
+        keyword: String
+    ): List<SjLinksAndDomainsWithTags>
+
 
     // Insert queries
     @Insert
@@ -60,7 +70,7 @@ interface SjDao {
     suspend fun insertLinkTagCrossRef(newCrossRef: LinkTagCrossRef)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLinkTagCrossRefs(vararg newCrossRef: LinkTagCrossRef)
+    suspend fun insertLinkTagCrossRefs(vararg newCrossRef: LinkTagCrossRef):List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSearchTagCrossRefs(vararg ref: SearchTagCrossRef)
@@ -123,5 +133,6 @@ interface SjDao {
 
     @Query("SELECT * FROM SjDomain WHERE did = :did")
     suspend fun getDomainByDid(did: Int): SjDomain
+
 
 }

@@ -33,6 +33,7 @@ class EditTagFragment : SjBasicFragment<FragmentEditTagBinding>() {
         binding.viewModel = viewModel
         if (arguments != null) {
             loadUpdateData(arguments!!)
+            binding.toolbar.toolbarTitle="태그 수정"
         }
 
         //set focus

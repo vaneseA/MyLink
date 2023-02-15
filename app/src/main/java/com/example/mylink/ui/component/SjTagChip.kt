@@ -4,11 +4,14 @@ import android.content.Context
 import com.example.mylink.data.model.SjTag
 import com.google.android.material.chip.Chip
 
-class SjTagChip(context: Context, val tag: SjTag) : Chip(context) {
+class SjTagChip(context: Context, val tag: SjTag) : Chip(context, null) {
 
     init {
         setText(tag.name)
         setBasicMode()
+        isCheckedIconVisible = false
+
+        CustomComponentStyleUtil.setMaterialCustomChipStyle(this)
     }
 
     fun setBasicMode() {

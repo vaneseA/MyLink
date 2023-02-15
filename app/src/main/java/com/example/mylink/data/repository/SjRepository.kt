@@ -18,6 +18,7 @@ class SjRepository private constructor() {
     val searchLinkList: LiveData<List<SjLinksAndDomainsWithTags>> get() = _searchLinkList
     val searches: LiveData<List<SjSearchWithTags>> = dao.getAllSearch()
     val domains: LiveData<List<SjDomain>> = dao.getAllDomains()
+    val domainsExceptDefault: LiveData<List<SjDomain>> = dao.getAllDomainsExceptDefault()
     val tags: LiveData<List<SjTag>> = dao.getAllTags()
     val linkList: LiveData<List<SjLinksAndDomainsWithTags>> = dao.getAllLinksAndDomainsWithTags()
 
@@ -80,7 +81,16 @@ class SjRepository private constructor() {
     }
 
 
-    // search method
+    // search methods
+    fun searchLinksBySearchSet(keyword: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = dao.searchLinksAndDomainsWithTagsByLinkName(
+                "%$keyword%"
+            )
+            _searchLinkList.postValue(result)
+        }
+    }
+
     fun searchLinksBySearchSet(keyword: String, selectedTags: List<SjTag>) {
         CoroutineScope(Dispatchers.IO).launch {
             val list: MutableList<Int> = mutableListOf()
@@ -95,7 +105,7 @@ class SjRepository private constructor() {
     }
 
     // update methods
-    fun updateLinkAndTags(domain: SjDomain, link: SjLink, tags: List<SjTag>) {
+    fun updateLinkAndTags(domain: SjDomain, link: SjLink, tags: MutableList<SjTag>) {
         CoroutineScope(Dispatchers.IO).launch {
             link.did = domain.did
             dao.updateLink(link)

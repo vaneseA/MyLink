@@ -42,6 +42,7 @@ class EditLinkFragment : SjBasicFragment<FragmentEditLinkBinding>() {
     }
 
     override fun onCreateView() {
+        viewModel.initialize()
         binding.viewModel = viewModel
         if (arguments != null) {
             loadUpdateData(arguments!!)

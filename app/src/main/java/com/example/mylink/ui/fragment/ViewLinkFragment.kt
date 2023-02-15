@@ -22,6 +22,11 @@ class ViewLinkFragment : SjBasicFragment<FragmentViewLinkBinding>() {
     // override methods
     override fun layoutId(): Int = R.layout.fragment_view_link
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.searchLinkBySearchSet()
+    }
+
     override fun onCreateView() {
         // set recycler view
         val adapter = RecyclerLinkAdapter(
@@ -78,8 +83,8 @@ class ViewLinkFragment : SjBasicFragment<FragmentViewLinkBinding>() {
     // handle user event methods
     private fun deleteLink(link: SjLink, tags: List<SjTag>) {
         viewModel.deleteLink(link, tags)
-        if(viewModel.mode==ListMode.MODE_SEARCH){
-            viewModel.searchLinkBySearchSet()
+        if (viewModel.mode == ListMode.MODE_SEARCH) {
+            viewModel.searchLinkBySearchSetAndSave()
         }
     }
 
@@ -87,9 +92,14 @@ class ViewLinkFragment : SjBasicFragment<FragmentViewLinkBinding>() {
         moveToOtherFragment(SearchFragment())
     }
 
+    private fun isStringTypeUrl(url: String): Boolean {
+        return url.startsWith("http://") || url.startsWith("https://")
+    }
     private fun startWebBrowser(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(intent)
+        if (isStringTypeUrl(url)) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        }
     }
 
     private fun startEditActivity() {

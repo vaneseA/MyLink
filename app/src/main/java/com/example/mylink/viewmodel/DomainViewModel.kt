@@ -10,7 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class DomainViewModel : BasicViewModelWithRepository() {
-    val domains = repository.domains
+    val domains = repository.domainsExceptDefault
 
     // Data binding live data
     val domainName = MutableLiveData<String>()

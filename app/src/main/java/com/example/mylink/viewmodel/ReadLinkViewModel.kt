@@ -35,15 +35,34 @@ class ReadLinkViewModel : BasicViewModelWithRepository() {
 
 
     // search methods
-    fun searchLinkBySearchSet() {
-        val keyword= searchWord.value
-        if (keyword.isNullOrEmpty() && selectedTags.isEmpty()) {
+    fun isSearchSetEmpty(): Boolean {
+        return searchWord.value.isNullOrEmpty() && selectedTags.isEmpty()
+    }
+
+    fun searchLinkBySearchSetAndSave() {
+        var keyword = searchWord.value ?: ""
+        searchLinkBySearchSet()
+        if(!isSearchSetEmpty())
+            saveSearch(keyword)
+    }
+
+    fun searchLinkBySearchSet(){
+        var keyword = searchWord.value ?: ""
+
+        //when search data is null -> return to All list mode
+        if (isSearchSetEmpty()) {
             this.mode = ListMode.MODE_ALL
+            return
+        }
+
+        this.mode = ListMode.MODE_SEARCH
+        // search without Tags
+        if (selectedTags.isEmpty()) {
+            repository.searchLinksBySearchSet(keyword)
+
+            // search with Tags
         } else {
-            this.mode = ListMode.MODE_SEARCH
-            val searchWord = keyword ?: ""
-            repository.searchLinksBySearchSet(searchWord, selectedTags)
-            saveSearch(searchWord)
+            repository.searchLinksBySearchSet(keyword, selectedTags)
         }
     }
 
@@ -61,3 +80,4 @@ class ReadLinkViewModel : BasicViewModelWithRepository() {
     }
 
 }
+

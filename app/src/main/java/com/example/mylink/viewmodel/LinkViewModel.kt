@@ -67,6 +67,10 @@ class LinkViewModel : BasicViewModelWithRepository() {
         이 부분 LiveData Transformations 활용해서 해결 가능하면 고치고 싶은 부분이다.
          */
     }
+    fun initialize(){
+        linkName.postValue("")
+        linkUrl.postValue("")
+    }
 
 
     // set link for update
