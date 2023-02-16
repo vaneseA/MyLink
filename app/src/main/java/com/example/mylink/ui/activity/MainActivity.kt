@@ -6,9 +6,9 @@ import androidx.fragment.app.Fragment
 import com.example.mylink.R
 import com.example.mylink.databinding.ActivityMainBinding
 import com.example.mylink.ui.activity.basic.ViewBindingBasicActivity
-import com.example.mylink.ui.fragment.ViewDomainFragment
-import com.example.mylink.ui.fragment.ViewLinkFragment
-import com.example.mylink.ui.fragment.ViewTagFragment
+import com.example.mylink.ui.fragment.ListDomainFragment
+import com.example.mylink.ui.fragment.ListLinkFragment
+import com.example.mylink.ui.fragment.ListTagFragment
 import com.example.mylink.viewmodel.ReadLinkViewModel
 
 
@@ -16,9 +16,9 @@ class MainActivity : ViewBindingBasicActivity<ActivityMainBinding>() {
     val viewModel: ReadLinkViewModel by viewModels()
 
     // 바텀 내비에 따라 부착할 fragment들.
-    private val linkFragment = ViewLinkFragment()
-    private val tagFragment = ViewTagFragment()
-    private val domainFragment = ViewDomainFragment()
+    private val linkFragment = ListLinkFragment()
+    private val tagFragment = ListTagFragment()
+    private val domainFragment = ListDomainFragment()
 
     override fun viewBindingInflate(inflater: LayoutInflater): ActivityMainBinding =
         ActivityMainBinding.inflate(inflater)

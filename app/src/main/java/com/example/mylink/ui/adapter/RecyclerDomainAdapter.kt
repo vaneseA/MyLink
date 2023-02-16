@@ -5,13 +5,13 @@ import android.view.ViewGroup
 
 import com.example.mylink.data.model.SjDomain
 import com.example.mylink.databinding.ItemDomainsBinding
-import com.example.mylink.ui.adapter.basic.SjDataBindingViewHolder
-import com.example.mylink.ui.adapter.basic.SjRecyclerAdapter
+import com.example.mylink.ui.adapter.basic.RecyclerBasicAdapter
+import com.example.mylink.ui.adapter.basic.RecyclerBasicViewHolder
 
 class RecyclerDomainAdapter(
     private val updateOperation: (Int) -> Unit,
     private val deleteOperation: (SjDomain) -> Unit
-) : SjRecyclerAdapter<SjDomain, DomainsViewHolder>() {
+) : RecyclerBasicAdapter<SjDomain, DomainsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DomainsViewHolder {
         val binding = ItemDomainsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -25,7 +25,7 @@ class RecyclerDomainAdapter(
 }
 
 class DomainsViewHolder(binding: ItemDomainsBinding) :
-    SjDataBindingViewHolder<ItemDomainsBinding>(binding) {
+    RecyclerBasicViewHolder<ItemDomainsBinding>(binding) {
 
     fun setItem(
         domain: SjDomain,

@@ -5,18 +5,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjDomain
-import com.example.mylink.databinding.FragmentViewDomainBinding
+import com.example.mylink.databinding.FragmentListDomainBinding
 import com.example.mylink.ui.adapter.RecyclerDomainAdapter
-import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.DomainViewModel
 
-class ViewDomainFragment : SjBasicFragment<FragmentViewDomainBinding>() {
+class ListDomainFragment : SjBasicFragment<FragmentListDomainBinding>() {
     val viewModel: DomainViewModel by activityViewModels()
 
 
     // override methods
-    override fun layoutId(): Int = R.layout.fragment_view_domain
+    override fun layoutId(): Int = R.layout.fragment_list_domain
 
     override fun onCreateView() {
         // set recyclerView

@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import com.example.mylink.data.model.SjSearchWithTags
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.ItemSearchSetBinding
-import com.example.mylink.ui.adapter.basic.SjDataBindingViewHolder
-import com.example.mylink.ui.adapter.basic.SjRecyclerAdapter
+import com.example.mylink.ui.adapter.basic.RecyclerBasicAdapter
+import com.example.mylink.ui.adapter.basic.RecyclerBasicViewHolder
 
 class RecyclerSearchAdapter(
     private val clickOperation: (String, List<SjTag>) -> Unit
-) : SjRecyclerAdapter<SjSearchWithTags, SearchesViewHolder>() {
+) : RecyclerBasicAdapter<SjSearchWithTags, SearchesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchesViewHolder {
         val binding =
@@ -25,7 +25,9 @@ class RecyclerSearchAdapter(
 }
 
 class SearchesViewHolder(binding: ItemSearchSetBinding) :
-    SjDataBindingViewHolder<ItemSearchSetBinding>(binding) {
+    RecyclerBasicViewHolder<ItemSearchSetBinding>(
+        binding
+    ) {
 
     fun setSearch(
         search: SjSearchWithTags,

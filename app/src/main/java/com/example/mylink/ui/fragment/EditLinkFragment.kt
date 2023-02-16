@@ -1,9 +1,12 @@
 package com.example.mylink.ui.fragment
 
+import android.content.ClipDescription
+import android.content.ClipboardManager
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.CompoundButton
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
@@ -92,6 +95,7 @@ class EditLinkFragment : SjBasicFragment<FragmentEditLinkBinding>() {
         binding.saveButton.setOnClickListener { saveLink() }
         binding.addDomainTextView.setOnClickListener { moveToEditDomainFragment() }
         binding.addTagTextView.setOnClickListener { moveToEditTagFragment() }
+        binding.pasteButton.setOnClickListener { pasteLinkFromClipBoard() }
     }
 
 
@@ -127,6 +131,28 @@ class EditLinkFragment : SjBasicFragment<FragmentEditLinkBinding>() {
     private fun saveLink() {
         viewModel.saveLink()
         this.requireActivity().finish()
+    }
+
+    private fun pasteLinkFromClipBoard() {
+        var clipboard : ClipboardManager = ContextCompat.getSystemService(
+            requireContext(),
+            ClipboardManager::class.java
+        )!!
+        var pasteData: String = ""
+
+        // If the clipboard doesn't contain data, disable the paste menu item.
+        // If it does contain data, decide if you can handle the data.
+        if (clipboard.hasPrimaryClip()
+            && clipboard.primaryClipDescription!!.hasMimeType(
+                ClipDescription.MIMETYPE_TEXT_PLAIN
+            )
+        ) {
+            //since the clipboard contains plain text.
+            val item = clipboard.primaryClip!!.getItemAt(0)
+            // Gets the clipboard as text.
+            pasteData = item.text.toString()
+        }
+        viewModel.linkUrl.postValue(pasteData)
     }
 
 }

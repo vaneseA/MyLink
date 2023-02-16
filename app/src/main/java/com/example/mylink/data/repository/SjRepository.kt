@@ -66,9 +66,38 @@ class SjRepository private constructor() {
 
     fun insertSearchAndTags(newSearch: SjSearch, selectedTags: List<SjTag>) {
         CoroutineScope(Dispatchers.IO).launch {
-            val sid = async { dao.insertSearch(newSearch).toInt() }
-            //insert crossRef after newSearch insert
-            insertSearchTagCrossRef(sid.await(), selectedTags)
+            //find if there is already same searchData and delete them
+            val sids = async {
+                getSearchBySearchWordAndTags(newSearch.keyword, selectedTags)
+            }
+            deleteSearchesBySids(sids.await())
+
+            //insert new searchData
+            val newSid = async {
+                sids.await()
+                dao.insertSearch(newSearch).toInt()
+            }
+            insertSearchTagCrossRef(newSid.await(), selectedTags)
+        }
+    }
+
+    private suspend fun deleteSearchesBySids(sids: List<Int>) {
+        dao.deleteSearchTagCrossRefsBySid(sids)
+        dao.deleteSearches(sids)
+    }
+
+    private suspend fun getSearchBySearchWordAndTags(
+        searchWord: String,
+        selectedTags: List<SjTag>
+    ): List<Int> {
+        return if (selectedTags.isEmpty()) {
+            dao.getSearchWithTagsBySearchWord(searchWord)
+        } else {
+            val tids = mutableListOf<Int>()
+            for (tag in selectedTags) {
+                tids.add(tag.tid)
+            }
+            dao.getSearchWithTagsBySearchWordAndTags(searchWord, tids)
         }
     }
 
@@ -133,9 +162,16 @@ class SjRepository private constructor() {
     fun deleteDomain(domain: SjDomain) {
         CoroutineScope(Dispatchers.IO).launch {
             //delete all related links
+            val url = domain.url
+            val updateLinks = mutableListOf<SjLink>()
             val job = launch {
                 val links = dao.getLinkAndDomainWithTagsByDid(domain.did)
-                deleteLinks(links)
+                for (link in links) {
+                    link.link.url = StringBuilder(url).append(link.link.url).toString()
+                    link.link.did = 1
+                    updateLinks.add(link.link)
+                }
+                dao.updateLinks(*updateLinks.toTypedArray())
             }
             job.join()
             //wait and delete

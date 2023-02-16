@@ -23,12 +23,57 @@ interface SjDao {
     fun getAllSearch(): LiveData<List<SjSearchWithTags>>
 
     @Transaction
+    @Query("SELECT * FROM SjSearch ORDER BY sid DESC")
+    fun getAllSearchForTest(): List<SjSearchWithTags>
+
+    @Transaction
     @Query("SELECT * FROM SjLink ORDER BY lid DESC")
     fun getAllLinksAndDomainsWithTags()
             : LiveData<List<SjLinksAndDomainsWithTags>>
 
     @Query("SELECT COUNT(*) FROM SjDomain")
     suspend fun getDomainCount(): Int
+
+    @Query("SELECT COUNT(*) FROM SjLink")
+    suspend fun getLinkCount(): Int
+
+    @Query("SELECT COUNT(*) FROM SjTag")
+    suspend fun getTagCount(): Int
+
+    @Query("SELECT COUNT(*) FROM LinkTagCrossRef")
+    suspend fun getLinkTagCrossRefCount(): Int
+
+    @Query("SELECT COUNT(*) FROM SearchTagCrossRef")
+    suspend fun getSearchTagCrossRefCount(): Int
+
+
+    //search search query by search word and tags
+    @Query(
+        "SELECT search.sid FROM SjSearch as search "
+                + "INNER JOIN SearchTagCrossRef as ref ON search.sid = ref.sid "
+                + "INNER JOIN SjTag as tag ON ref.tid = tag.tid "
+                + "WHERE search.keyword = :searchWord "
+                + "AND tag.tid IN(:tags) "
+                + "GROUP BY search.sid" //prevent duplicates
+    )
+    suspend fun getSearchWithTagsBySearchWordAndTags(
+        searchWord: String,
+        tags: List<Int>
+    ): List<Int>
+
+    // search search query by search word
+    @Query(
+        "SELECT search.sid FROM SjSearch as search "
+                + "WHERE search.keyword = :searchWord "
+                + "AND search.sid NOT IN("
+                + "SELECT ref.sid "
+                + "FROM SearchTagCrossRef as ref "
+                + "GROUP BY ref.sid"
+                + ")"
+    )
+    suspend fun getSearchWithTagsBySearchWord(
+        searchWord: String,
+    ): List<Int>
 
 
     // search link query by link name and tags
@@ -70,10 +115,10 @@ interface SjDao {
     suspend fun insertLinkTagCrossRef(newCrossRef: LinkTagCrossRef)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLinkTagCrossRefs(vararg newCrossRef: LinkTagCrossRef):List<Long>
+    suspend fun insertLinkTagCrossRefs(vararg newCrossRef: LinkTagCrossRef): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSearchTagCrossRefs(vararg ref: SearchTagCrossRef)
+    suspend fun insertSearchTagCrossRefs(vararg ref: SearchTagCrossRef): List<Long>
 
 
     // update queries
@@ -85,6 +130,9 @@ interface SjDao {
 
     @Update
     suspend fun updateDomain(domain: SjDomain)
+
+    @Update
+    suspend fun updateLinks(vararg links: SjLink)
 
 
     // delete queries
@@ -103,6 +151,9 @@ interface SjDao {
     @Delete
     suspend fun deleteLinkTagCrossRefs(vararg ref: LinkTagCrossRef)
 
+    @Delete
+    suspend fun deleteSearchTagCrossRefs(vararg ref: SearchTagCrossRef)
+
     @Query("Delete FROM SearchTagCrossRef")
     suspend fun deleteAllSearchTagCrossRefs()
 
@@ -117,6 +168,12 @@ interface SjDao {
 
     @Query("DELETE FROM LinkTagCrossRef WHERE tid= :tid")
     suspend fun deleteLinkTagCrossRefsByTid(tid: Int)
+
+    @Query("DELETE FROM SearchTagCrossRef WHERE sid IN (:sids)")
+    suspend fun deleteSearchTagCrossRefsBySid(sids: List<Int>)
+
+    @Query("DELETE FROM SjSearch WHERE sid IN(:sids)")
+    suspend fun deleteSearches(sids: List<Int>)
 
 
     // query by key

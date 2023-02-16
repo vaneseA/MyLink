@@ -1,24 +1,21 @@
 package com.example.mylink.ui.fragment
 
-import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
-import com.example.mylink.databinding.FragmentViewTagBinding
+import com.example.mylink.databinding.FragmentListTagBinding
 import com.example.mylink.ui.component.SjTagChip
-import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.TagViewModel
 
 
-class ViewTagFragment : SjBasicFragment<FragmentViewTagBinding>() {
+class ListTagFragment : SjBasicFragment<FragmentListTagBinding>() {
     val viewModel: TagViewModel by activityViewModels()
 
 
     // override methods
-    override fun layoutId(): Int = R.layout.fragment_view_tag
+    override fun layoutId(): Int = R.layout.fragment_list_tag
 
     override fun onCreateView() {
         viewModel.tags.observe(

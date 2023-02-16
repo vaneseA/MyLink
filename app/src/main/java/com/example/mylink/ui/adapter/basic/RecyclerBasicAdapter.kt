@@ -2,7 +2,7 @@ package com.example.mylink.ui.adapter.basic
 
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class SjRecyclerAdapter<T, C : RecyclerView.ViewHolder>(
+abstract class RecyclerBasicAdapter<T, C : RecyclerView.ViewHolder>(
     protected var itemList: List<T> = listOf()
 ) : RecyclerView.Adapter<C>() {
 
