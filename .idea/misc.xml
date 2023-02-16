@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/layout/fragment_edit_tag.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_empty.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_list_link.xml" value="0.14739583333333334" />
+        <entry key="app/src/main/res/layout/fragment_play_video.xml" value="0.14739583333333334" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_view_domain.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_view_link.xml" value="0.1" />
@@ -38,6 +39,7 @@
         <entry key="app/src/main/res/layout/layout_search_set.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/shimmer_link_search.xml" value="0.14739583333333334" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.203125" />
+        <entry key="app/src/main/res/menu/menu_link_datail.xml" value="0.234375" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
       </map>
     </option>

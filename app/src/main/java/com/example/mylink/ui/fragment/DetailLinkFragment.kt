@@ -1,25 +1,24 @@
 package com.example.mylink.ui.fragment
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.palette.graphics.Palette
-import com.bumptech.glide.Glide
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjLink
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentDetailLinkBinding
 import com.example.mylink.ui.activity.EditLinkActivity
+import com.example.mylink.ui.component.SjImageViewUtil
 import com.example.mylink.ui.component.SjTagChip
+import com.example.mylink.ui.component.VideoPreloadWorker
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.DetailLinkViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 class DetailLinkFragment : SjBasicFragment<FragmentDetailLinkBinding>() {
     private val viewModel: DetailLinkViewModel by activityViewModels()
@@ -39,67 +38,107 @@ class DetailLinkFragment : SjBasicFragment<FragmentDetailLinkBinding>() {
 
     override fun onStart() {
         super.onStart()
+        SjImageViewUtil.setDefaultImage(
+            fragment = this,
+            imageView = binding.previewImageView,
+            defaultImage = R.drawable.ic_baseline_web_24
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModel.loadLinkData(lid)
     }
 
+    override fun onStop() {
+        super.onStop()
+        // clear viewModel data when screen not visible
+        viewModel.clearData()
+    }
+
     override fun onCreateView() {
+        // get lid from argument
+        lid = requireArguments().getInt("lid")
+
+        // set variable of binding
         binding.viewModel = viewModel
 
-        lid = requireArguments().getInt("lid")
+        // set toolbar Menu
+        binding.toolbar.setMenu(
+            R.menu.menu_link_datail,
+            hashMapOf(R.id.playItem to ::moveToPlayFragment)
+        )
+
+        // show tags or show empty view
         viewModel.tags.observe(viewLifecycleOwner, { tagList ->
             if (tagList.isEmpty()) {
                 binding.tagEmptyGroup.visibility = View.VISIBLE
             } else {
                 binding.tagEmptyGroup.visibility = View.GONE
+                binding.tagChipGroup.removeAllViews()
+                for (tag in tagList) {
+                    binding.tagChipGroup.addView(
+                        SjTagChip(
+                            requireContext(),
+                            tag
+                        ).apply { setViewMode() })
+                }
             }
         })
 
+        // set linkdata user to click event
         viewModel.link.observe(viewLifecycleOwner, { data ->
-            val fullUrl = data.domain.url + data.link.url
-            viewModel.loadPreviewImageUrl(fullUrl)
-
-            binding.tagChipGroup.removeAllViews()
-            for (tag in data.tags) {
-                binding.tagChipGroup.addView(
-                    SjTagChip(
-                        requireContext(),
-                        tag
-                    ).apply { setViewMode() })
-            }
-
+            // edit
             binding.editImageView.setOnClickListener { startEditActivityToUpdate(data.link.lid) }
+
+            // delete
             binding.deleteImageView.setOnClickListener { deleteLink(data.link, data.tags) }
-            val openListener =
-                View.OnClickListener { startWebBrowser(data.domain.url + data.link.url) }
+
+            // open url with browser
+            val openListener = View.OnClickListener { startWebBrowser(data.domain.url + data.link.url) }
             binding.previewImageView.setOnClickListener(openListener)
             binding.nameTextView.setOnClickListener(openListener)
             binding.fullUrlTextView.setOnClickListener(openListener)
         })
 
+        // show image preview
         viewModel.imageUrl.observe(viewLifecycleOwner,
             {
                 if (!it.isNullOrEmpty()) {
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val bitmap =
-                            Glide.with(this@DetailLinkFragment).asBitmap().load(it).submit().get()
-                        val palette = Palette.from(bitmap).generate()
-
-                        launch(Dispatchers.Main) {
-                            val swatch = palette.mutedSwatch ?: palette.darkMutedSwatch
-                            if (swatch != null) binding.previewImageView.setBackgroundColor(swatch.rgb)
-                            else binding.previewImageView.setBackgroundColor(Color.TRANSPARENT)
-                        }
-                    }
-                    Log.d("imageResource", it)
-                    Glide.with(this).load(it).centerCrop().into(binding.previewImageView)
+                    SjImageViewUtil.setImage(
+                        fragment = this,
+                        binding.previewImageView,
+                        it,
+                        R.drawable.ic_baseline_web_24
+                    )
+                } else {
+                    SjImageViewUtil.setDefaultImage(
+                        fragment = this,
+                        binding.previewImageView,
+                        R.drawable.ic_baseline_web_24
+                    )
                 }
             })
+        schedulePreloadWork("https://www.youtube.com/watch?v=H0M1yU6uO30")
+    }
 
-
+    private fun schedulePreloadWork(videoUrl: String) {
+        val workManager = WorkManager.getInstance(requireActivity().applicationContext)
+        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoUrl)
+        workManager.enqueueUniqueWork(
+            "VideoPreloadWorker",
+            ExistingWorkPolicy.KEEP,
+            videoPreloadWorker
+        )
     }
 
     // handle user event methods
+    private fun moveToPlayFragment() {
+        val url = "https://www.youtube.com/watch?v=H0M1yU6uO30"
+        moveToOtherFragment(PlayVideoFragment.newInstance(url))
+        Toast.makeText(context, "pressed", Toast.LENGTH_LONG).show()
+    }
+
     private fun deleteLink(link: SjLink, tags: List<SjTag>) {
         viewModel.deleteLink(link, tags)
         popBack()
@@ -121,6 +160,4 @@ class DetailLinkFragment : SjBasicFragment<FragmentDetailLinkBinding>() {
             startActivity(intent)
         }
     }
-
-
 }

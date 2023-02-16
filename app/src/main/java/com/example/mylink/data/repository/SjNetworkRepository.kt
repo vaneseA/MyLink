@@ -10,7 +10,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
 
-
 class SjNetworkRepository private constructor() {
 
     private val AGENT = "Mozilla"
@@ -60,6 +59,8 @@ class SjNetworkRepository private constructor() {
             }
         } catch (e: java.lang.Exception) {
             Log.e("error", e.localizedMessage)
+            Log.d("image load failed", "empty")
+            return ""
         }
         return ""
     }
