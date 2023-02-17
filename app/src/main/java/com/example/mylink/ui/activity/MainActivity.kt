@@ -6,11 +6,10 @@ import androidx.fragment.app.Fragment
 import com.example.mylink.R
 import com.example.mylink.databinding.ActivityMainBinding
 import com.example.mylink.ui.activity.basic.SjBasicActivity
-import com.example.mylink.ui.fragment.ListDomainFragment
 import com.example.mylink.ui.fragment.ListLinkFragment
-import com.example.mylink.ui.fragment.ListTagFragment
+import com.example.mylink.ui.fragment.ListVideoFragment
+import com.example.mylink.ui.fragment.SettingFragment
 import com.example.mylink.viewmodel.ReadLinkViewModel
-import com.github.yeeun_yun97.toy.linksaver.ui.fragment.ListVideoFragment
 
 
 class MainActivity : SjBasicActivity<ActivityMainBinding>() {
@@ -18,9 +17,8 @@ class MainActivity : SjBasicActivity<ActivityMainBinding>() {
 
     // 바텀 내비에 따라 부착할 fragment들.
     private val linkFragment = ListLinkFragment()
-    private val tagFragment = ListTagFragment()
-    private val domainFragment = ListDomainFragment()
     private val videoFragment = ListVideoFragment()
+    private val settingFragment = SettingFragment()
 
     override fun viewBindingInflate(inflater: LayoutInflater): ActivityMainBinding =
         ActivityMainBinding.inflate(inflater)
@@ -39,15 +37,14 @@ class MainActivity : SjBasicActivity<ActivityMainBinding>() {
                     this.replaceFragmentTo(linkFragment)
                     true
                 }
-                R.id.domainItem -> {
+                R.id.videoItem -> {
                     this.replaceFragmentTo(videoFragment)
                     true
                 }
-                R.id.tagItem -> {
-                    this.replaceFragmentTo(tagFragment)
+                R.id.settingItem -> {
+                    this.replaceFragmentTo(settingFragment)
                     true
                 }
-                R.id.settingItem -> true
                 else -> false
             }
         }

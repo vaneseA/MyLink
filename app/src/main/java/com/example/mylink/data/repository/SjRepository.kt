@@ -3,7 +3,7 @@ package com.example.mylink.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mylink.data.dao.SjDao
-import com.example.mylink.data.db.SjDatabase
+import com.example.mylink.data.db.SjDatabaseUtil
 import com.example.mylink.data.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class SjRepository private constructor() {
 
-    private val dao: SjDao = SjDatabase.getDao()
+    private val dao: SjDao = SjDatabaseUtil.getDao()
 
     private val _searchLinkList = MutableLiveData<List<SjLinksAndDomainsWithTags>>()
     val searchLinkList: LiveData<List<SjLinksAndDomainsWithTags>> get() = _searchLinkList

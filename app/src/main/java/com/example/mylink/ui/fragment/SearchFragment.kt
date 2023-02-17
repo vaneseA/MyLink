@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentSearchBinding
-import com.example.mylink.ui.adapter.RecyclerSearchAdapter
 import com.example.mylink.ui.adapter.RecyclerSearchGalleryAdapter
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.SjBasicFragment

@@ -28,12 +28,14 @@ class PlayVideoFragment : SjBasicFragment<FragmentPlayVideoBinding>() {
     private var _player: ExoPlayer? = null
     private val player: ExoPlayer get() = _player!!
 
-    private lateinit var mHttpDataSourceFactory: HttpDataSource.Factory
-    private lateinit var mDefaultDataSourceFactory: DefaultDataSourceFactory
-    private lateinit var mCacheDataSourceFactory: DataSource.Factory
     private lateinit var exoPlayer: SimpleExoPlayer
     private lateinit var mediaSource: ProgressiveMediaSource
-//    private val cache: SimpleCache = LinkSaverApplication.cache
+
+    //    private val cache: SimpleCache = LinkSaverApplication.cache
+//    private lateinit var mHttpDataSourceFactory: HttpDataSource.Factory
+//    private lateinit var mDefaultDataSourceFactory: DefaultDataSourceFactory
+//    private lateinit var mCacheDataSourceFactory: DataSource.Factory
+
 
     companion object {
         fun newInstance(url: String): PlayVideoFragment {
