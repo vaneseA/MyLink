@@ -15,6 +15,7 @@ import com.example.mylink.ui.component.ViewVisibilityUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.ListMode
 import com.example.mylink.viewmodel.ReadLinkViewModel
+import com.github.yeeun_yun97.toy.linksaver.ui.fragment.DetailVideoFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -101,7 +102,8 @@ class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
     }
 
     private fun moveToDetailFragment(lid: Int) {
-        moveToOtherFragment(DetailLinkFragment.newInstance(lid))
+//        moveToOtherFragment(DetailLinkFragment.newInstance(lid))
+        moveToOtherFragment(DetailVideoFragment.newInstance(lid))
     }
 
 
