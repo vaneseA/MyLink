@@ -22,6 +22,9 @@ class SjRepository private constructor() {
     val tags: LiveData<List<SjTag>> = dao.getAllTags()
     val linkList: LiveData<List<SjLinksAndDomainsWithTags>> = dao.getAllLinksAndDomainsWithTags()
 
+    val linkTypeVideoList = dao.getAllLinksByType(ELinkType.video.name)
+    val linkTypeLinkList = dao.getAllLinksByType(ELinkType.link.name)
+
     companion object {
         // singleton object
         private lateinit var repo: SjRepository
@@ -47,9 +50,9 @@ class SjRepository private constructor() {
             dao.insertTag(newTag)
         }
 
-    fun insertLinkAndTags(domain: SjDomain, newLink: SjLink, tags: List<SjTag>) =
+    fun insertLinkAndTags(domain: SjDomain?, newLink: SjLink, tags: List<SjTag>) =
         CoroutineScope(Dispatchers.IO).launch {
-            newLink.did = domain.did
+            if(domain!=null)newLink.did = domain.did
             val lid = async { dao.insertLink(newLink).toInt() }
 
             //insert crossRef after newLink insert
@@ -134,9 +137,9 @@ class SjRepository private constructor() {
     }
 
     // update methods
-    fun updateLinkAndTags(domain: SjDomain, link: SjLink, tags: MutableList<SjTag>) {
+    fun updateLinkAndTags(domain: SjDomain?, link: SjLink, tags: MutableList<SjTag>) {
         CoroutineScope(Dispatchers.IO).launch {
-            link.did = domain.did
+            if(domain!=null) link.did = domain.did
             dao.updateLink(link)
 
             //update tags:: delete all and insert all
@@ -231,5 +234,7 @@ class SjRepository private constructor() {
     suspend fun getTagByTid(tid: Int): SjTag = dao.getTagByTid(tid)
 
     suspend fun getDomainByDid(did: Int): SjDomain = dao.getDomainByDid(did)
+
+
 
 }

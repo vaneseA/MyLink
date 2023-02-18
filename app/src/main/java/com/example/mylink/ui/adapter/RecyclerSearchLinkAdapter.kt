@@ -2,6 +2,9 @@ package com.example.mylink.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.example.mylink.R
+import com.example.mylink.data.model.ELinkType
 import com.example.mylink.data.model.SjLinksAndDomainsWithTags
 import com.example.mylink.databinding.ItemLinkSearchBinding
 import com.example.mylink.ui.adapter.basic.RecyclerBasicAdapter
@@ -31,6 +34,11 @@ class LinksSearchViewHolder(binding: ItemLinkSearchBinding) :
     ) {
         binding.data = link
         binding.root.setOnClickListener { detailOperation(link.link.lid) }
+        val drawable = when (link.link.type) {
+            ELinkType.video -> R.drawable.ic_icons8_video
+            ELinkType.link -> R.drawable.ic_icons8_link
+        }
+        Glide.with(itemView.context).load(drawable).into(binding.linkIconImageView)
     }
 
 }

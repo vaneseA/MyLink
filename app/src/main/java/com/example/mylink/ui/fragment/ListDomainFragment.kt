@@ -18,6 +18,8 @@ class ListDomainFragment : SjBasicFragment<FragmentListDomainBinding>() {
     override fun layoutId(): Int = R.layout.fragment_list_domain
 
     override fun onCreateView() {
+        val handlerMap = hashMapOf<Int, ()->Unit>(R.id.menu_add to ::moveToAddFragment)
+        binding.toolbar.setMenu(R.menu.toolbar_menu_add, handlerMap = handlerMap)
         // set recyclerView
         val adapter = RecyclerDomainAdapter(
             ::moveToEditDomainFragment,
@@ -48,6 +50,10 @@ class ListDomainFragment : SjBasicFragment<FragmentListDomainBinding>() {
 
     private fun deleteDomain(domain: SjDomain) {
         viewModel.deleteDomain(domain)
+    }
+
+    private fun moveToAddFragment(){
+        moveToOtherFragment(EditDomainFragment())
     }
 
 }
