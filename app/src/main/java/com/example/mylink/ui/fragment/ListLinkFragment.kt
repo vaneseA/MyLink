@@ -13,15 +13,16 @@ import com.example.mylink.ui.adapter.RecyclerSearchLinkAdapter
 import com.example.mylink.ui.component.DataState
 import com.example.mylink.ui.component.ViewVisibilityUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.viewmodel.ListMode
-import com.example.mylink.viewmodel.ReadLinkViewModel
+import com.example.mylink.ui.fragment.search.SearchFragment
+import com.example.mylink.viewmodel.search.ListMode
+import com.example.mylink.viewmodel.search.SearchLinkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
-    val viewModel: ReadLinkViewModel by activityViewModels()
+    val viewModel: SearchLinkViewModel by activityViewModels()
 
     lateinit var viewUtil: ViewVisibilityUtil
 

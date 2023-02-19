@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.mylink.viewmodel.ReadLinkViewModel" />
+            type="com.example.mylink.viewmodel.search.SearchLinkViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +40,7 @@
             android:imeOptions="actionSearch"
             android:inputType="textPersonName"
             android:paddingHorizontal="10dp"
-            android:text="@={viewModel.searchWord}"
+            android:text="@={viewModel.bindingSearchWord}"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -63,9 +63,7 @@
             android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="@+id/recentSearchedRecyclerView"
             app:layout_constraintStart_toStartOf="@+id/tagTextView"
-            app:layout_constraintTop_toBottomOf="@+id/tagTextView">
-
-        </com.google.android.material.chip.ChipGroup>
+            app:layout_constraintTop_toBottomOf="@+id/tagTextView"/>
 
         <ImageView
             android:id="@+id/deleteImageView"
@@ -96,7 +94,7 @@
             app:layout_constraintStart_toStartOf="@+id/recentSearchWordTextView"
             app:layout_constraintTop_toBottomOf="@+id/recentSearchWordTextView"
             tools:itemCount="4"
-            tools:listitem="@layout/item_gallery_search_set" />
+            tools:listitem="@layout/item_search_set" />
 
         <ImageView
             android:id="@+id/searchImageView"

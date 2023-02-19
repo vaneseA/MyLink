@@ -1,4 +1,4 @@
-package com.example.mylink.ui.adapter
+package com.example.mylink.ui.adapter.binding
 
 import android.view.View
 import android.widget.TextView
@@ -11,26 +11,13 @@ import com.google.android.material.chip.ChipGroup
 class DataBindingSjAdapter {
     companion object {
         @JvmStatic
-        @BindingAdapter("chipCountData")
-        fun setTextByCount(view: TextView, count: Int) {
-            if (count < 2) {
-                view.isVisible = false
-            } else {
-                view.isVisible = true
-                view.setText("및 ${count - 1}개")
-            }
-        }
-
-        @JvmStatic
         @BindingAdapter("chipDataList")
         fun setChipByList(view: ChipGroup, tags: List<SjTag>?) {
             view.removeAllViews()
             if (!tags.isNullOrEmpty()) {
                 for( tag in tags) {
                     val chip = SjTagChip(view.context, tag)
-                    chip.isChecked = true
-                    chip.isCheckable = false
-                    chip.isClickable = false
+                    chip.setViewMode()
                     view.addView(chip)
                 }
             }
@@ -45,7 +32,8 @@ class DataBindingSjAdapter {
                 view.setText(string)
                 view.visibility = View.VISIBLE
             }
-
         }
     }
+
+
 }

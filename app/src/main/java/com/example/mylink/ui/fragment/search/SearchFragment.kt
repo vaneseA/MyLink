@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment
+package com.example.mylink.ui.fragment.search
 
 import android.graphics.Rect
 import android.view.View
@@ -6,26 +6,32 @@ import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.activityViewModels
-
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentSearchBinding
-import com.example.mylink.ui.adapter.RecyclerSearchGalleryAdapter
+import com.example.mylink.ui.adapter.recycler.SearchSetAdapter
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.viewmodel.ReadLinkViewModel
+import com.example.mylink.viewmodel.search.SearchLinkViewModel
+
 
 class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
-    val viewModel: ReadLinkViewModel by activityViewModels()
+    val viewModel: SearchLinkViewModel by activityViewModels()
 
+    // drawable resources
     private val deleteIcon by lazy {
-        AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_close_24)
+        AppCompatResources.getDrawable(
+            requireContext(),
+            R.drawable.ic_baseline_close_24
+        )
     }
     private val searchIcon by lazy {
-        AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_search_24)
+        AppCompatResources.getDrawable(
+            requireContext(),
+            R.drawable.ic_baseline_search_24
+        )
     }
 
 
@@ -36,32 +42,16 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         //set binding
         binding.viewModel = viewModel
 
-        // set focus
+        // set auto focus on Search Field
         binding.searchEditText.requestFocus()
-
-        // chip check listener
-        val onCheckedListener =
-            CompoundButton.OnCheckedChangeListener { btn, isChecked ->
-                val chip = btn as SjTagChip
-                if (isChecked) {
-                    viewModel.selectedTags.add(chip.tag)
-                    binding.searchImageView.setImageDrawable(searchIcon)
-
-                } else {
-                    viewModel.selectedTags.remove(chip.tag)
-                    if (viewModel.isSearchSetEmpty()) {
-                        binding.searchImageView.setImageDrawable(deleteIcon)
-                    }
-                }
-            }
 
         // set tag list
         viewModel.tagList.observe(viewLifecycleOwner, {
-            binding.tagChipGroup.removeAllViews()
-            for (tag in it) {
-                val chip = SjTagChip(requireContext(), tag)
-                chip.setOnCheckedChangeListener(onCheckedListener)
-                binding.tagChipGroup.addView(chip)
+            setTagList(it)
+        })
+        viewModel.targetTags.observe(viewLifecycleOwner, {
+            if (viewModel.tagList.value != null) {
+                setTagList(viewModel.tagList.value!!)
             }
         })
 
@@ -74,7 +64,7 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         }
 
         // user input -> set search icon
-        viewModel.searchWord.observe(viewLifecycleOwner, {
+        viewModel.bindingSearchWord.observe(viewLifecycleOwner, {
             if (it.isNullOrEmpty() && viewModel.isSearchSetEmpty()) {
                 binding.searchImageView.setImageDrawable(deleteIcon)
             } else {
@@ -88,12 +78,9 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         }
 
         // set recyclerview search set
-//        binding.recentSearchedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recentSearchedRecyclerView.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-
-//        val adapter = RecyclerSearchAdapter(::setSearch)
-        val adapter = RecyclerSearchGalleryAdapter(::setSearch)
+        val adapter = SearchSetAdapter(::setSearch, ::searchAndPopBack)
         binding.recentSearchedRecyclerView.addItemDecoration(
             object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
@@ -117,20 +104,40 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         )
 
         // handle user click event
-        binding.deleteImageView.setOnClickListener { deleteAllSearchSet() }
-        binding.deleteTextView.setOnClickListener { deleteAllSearchSet() }
+        val onClickListener = View.OnClickListener { deleteAllSearchSet() }
+        binding.deleteImageView.setOnClickListener(onClickListener)
+        binding.deleteTextView.setOnClickListener(onClickListener)
     }
 
-    //handle user click methods
-    private fun deleteAllSearchSet() {
-        viewModel.deleteAllSearch()
+    private fun setTagList(it: List<SjTag>) {
+        val onCheckedListener =
+            CompoundButton.OnCheckedChangeListener { btn, isChecked ->
+                val chip = btn as SjTagChip
+                if (isChecked) {
+                    viewModel.addTag(chip.tag)
+                    binding.searchImageView.setImageDrawable(searchIcon)
+                } else {
+                    viewModel.removeTag(chip.tag)
+                    if (viewModel.isSearchSetEmpty()) {
+                        binding.searchImageView.setImageDrawable(deleteIcon)
+                    }
+                }
+            }
+
+        binding.tagChipGroup.removeAllViews()
+        for (tag in it) {
+            val chip = SjTagChip(requireContext(), tag)
+            chip.isChecked = viewModel.containsTag(tag)
+            chip.setOnCheckedChangeListener(onCheckedListener)
+            binding.tagChipGroup.addView(chip)
+        }
     }
 
+
+    // search methods
     private fun setSearch(keyword: String, tags: List<SjTag>) {
-        viewModel.searchWord.postValue(keyword)
-        viewModel.selectedTags.clear()
-        viewModel.selectedTags.addAll(tags)
-        this.searchAndPopBack()
+        viewModel.bindingSearchWord.postValue(keyword)
+        viewModel.setTags(tags)
     }
 
     private fun searchAndPopBack() {
@@ -138,5 +145,14 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         popBack()
     }
 
+    //handle user click methods
+    private fun deleteAllSearchSet() {
+        viewModel.deleteAllSearch()
+    }
+
 }
+
+
+
+
 

@@ -9,11 +9,11 @@ import com.example.mylink.ui.activity.basic.SjBasicActivity
 import com.example.mylink.ui.fragment.ListLinkFragment
 import com.example.mylink.ui.fragment.ListVideoFragment
 import com.example.mylink.ui.fragment.SettingFragment
-import com.example.mylink.viewmodel.ReadLinkViewModel
+import com.example.mylink.viewmodel.search.SearchLinkViewModel
 
 
 class MainActivity : SjBasicActivity<ActivityMainBinding>() {
-    val viewModel: ReadLinkViewModel by viewModels()
+    val viewModel: SearchLinkViewModel by viewModels()
 
     // 바텀 내비에 따라 부착할 fragment들.
     private val linkFragment = ListLinkFragment()
