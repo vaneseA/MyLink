@@ -1,19 +1,17 @@
 package com.example.mylink.viewmodel
 
 import com.example.mylink.data.model.SjTag
-import com.example.mylink.ui.fragment.ListVideoFragment
+import com.example.mylink.data.model.VideoData
+import com.example.mylink.ui.fragment.playlist.ListVideoFragment
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
-
 
 class ListVideoViewModel : BasicViewModelWithRepository() {
 
     val allVideoList = repository.linkTypeVideoList
 
-
-
-    fun getDataList(): List<ListVideoFragment.VideoData> {
+    fun getDataList(): List<VideoData> {
         val list = listOf(
-            ListVideoFragment.VideoData(
+            VideoData(
                 url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                 name="Big Buck Bunny",
 

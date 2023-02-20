@@ -6,7 +6,7 @@
     <data>
         <variable
             name="data"
-            type="com.example.mylink.ui.fragment.ListVideoFragment.VideoData" />
+            type="com.example.mylink.data.model.VideoData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

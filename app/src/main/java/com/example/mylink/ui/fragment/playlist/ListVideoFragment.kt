@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment
+package com.example.mylink.ui.fragment.playlist
 
 import android.util.Log
 import android.widget.Toast
@@ -6,14 +6,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mylink.R
-import com.example.mylink.data.model.SjTag
+import com.example.mylink.data.model.VideoData
 import com.example.mylink.databinding.FragmentListVideoBinding
 import com.example.mylink.ui.adapter.RecyclerVideoAdapter
 import com.example.mylink.ui.adapter.VideoRecyclerViewHolder
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
+import com.example.mylink.ui.fragment.main.search.detail_link.DetailLinkFragment
 import com.example.mylink.viewmodel.ListVideoViewModel
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
+import com.google.common.collect.ImmutableSet
 
 
 class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
@@ -27,14 +30,6 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
     private var _player: ExoPlayer? = null
     private val player: ExoPlayer get() = _player!!
 
-    data class VideoData(
-        val lid: Int = 0,
-        val url: String,
-        val name: String,
-        val thumbnail: String,
-        val tagList: List<SjTag>
-    )
-
     override fun layoutId(): Int = R.layout.fragment_list_video
 
     override fun onCreateView() {
@@ -46,6 +41,14 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
         // player
         _player = ExoPlayer.Builder(requireContext()).build()
         player.repeatMode = Player.REPEAT_MODE_ONE
+
+        // disable track types or groups
+        player.trackSelectionParameters =
+            player.trackSelectionParameters.buildUpon()
+                .setDisabledTrackTypes(
+                    ImmutableSet.of(C.TRACK_TYPE_AUDIO)
+                ) // disable track type audio
+                .build()
 
         // set adapter
         manager = LinearLayoutManager(context)
@@ -81,6 +84,7 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
                 val position = manager.findFirstCompletelyVisibleItemPosition()
                 val currentViewHolder =
                     binding.videoRecyclerView.findViewHolderForLayoutPosition(position)
+                Log.d("onScroll", "prev: $prevPosition, current: $position")
                 if (position != prevPosition && currentViewHolder is VideoRecyclerViewHolder) {
                     if (prevPosition != -1) {
                         val prevViewHolder =
@@ -97,9 +101,14 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        // pause player
+        player.pause()
+    }
+
     override fun onStop() {
         super.onStop()
-
         // release player
         player.release()
         _player = null
@@ -107,7 +116,8 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
 
 
     private fun moveToDetailFragment(lid: Int) {
-        moveToOtherFragment(DetailVideoFragment.newInstance(lid))
+//        moveToOtherFragment(DetailVideoFragment.newInstance(lid))
+        moveToOtherFragment(DetailLinkFragment.newInstance(lid))
     }
 
     private fun moveToPlaylistFragment() {
