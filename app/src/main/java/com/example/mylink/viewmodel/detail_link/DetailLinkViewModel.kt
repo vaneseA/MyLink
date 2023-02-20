@@ -1,23 +1,17 @@
 package com.example.mylink.viewmodel.detail_link
 
-import android.util.Log
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.mylink.data.model.LinkModelUtil
-import com.example.mylink.data.model.SjLink
-import com.example.mylink.data.model.SjLinksAndDomainsWithTags
-import com.example.mylink.data.model.SjTag
-import com.example.mylink.data.repository.SjNetworkRepository
+import com.example.mylink.data.model.*
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+
 class DetailLinkViewModel : BasicViewModelWithRepository() {
-    private var _link = MutableLiveData<SjLinksAndDomainsWithTags>()
-    private val _imageUrl = MutableLiveData<String>("")
-    val link: LiveData<SjLinksAndDomainsWithTags> get() = _link
-    val imageUrl: LiveData<String> get() = _imageUrl
+    private var _link = MutableLiveData<LinkDetailValue>()
+    val link: LiveData<LinkDetailValue> get() = _link
 
     // binding variables
     private val _bindingLinkName = MutableLiveData("")
@@ -29,14 +23,13 @@ class DetailLinkViewModel : BasicViewModelWithRepository() {
 
     fun loadLinkData(lid: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val data = repository.getLinkAndDomainWithTagsByLid(lid)
-            _link.postValue(data)
-            _imageUrl.postValue(data.link.preview)
-            _bindingLinkName.postValue(data.link.name)
-            _bindingFullUrl.postValue(LinkModelUtil.getFullUrl(data))
+            val data = repository.getLinkDetailDataByLid(lid)
+            _bindingFullUrl.postValue(data.fullUrl)
+            _bindingLinkName.postValue(data.name)
             _bindingTags.postValue(data.tags)
+            _link.postValue(data)
         }
     }
 
-    fun deleteLink(link: SjLink, tags: List<SjTag>) = repository.deleteLink(link, tags)
+    fun deleteLink(lid: Int, tags: List<SjTag>) = repository.deleteLinkByLid(lid, tags)
 }

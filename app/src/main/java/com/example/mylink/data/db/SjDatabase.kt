@@ -7,15 +7,16 @@ import com.example.mylink.data.dao.SjDao
 import com.example.mylink.data.model.*
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [
         SjTag::class,
         SjLink::class,
         SjDomain::class,
         LinkTagCrossRef::class,
         SjSearch::class,
-        SearchTagCrossRef::class
-    ],
+        SearchTagCrossRef::class,
+        SjTagGroup::class
+    ]
 )
 abstract class SjDatabase : RoomDatabase() {
     abstract fun getDao(): SjDao

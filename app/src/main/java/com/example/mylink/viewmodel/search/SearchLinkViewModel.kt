@@ -18,7 +18,9 @@ class SearchLinkViewModel : BasicViewModelWithRepository() {
     val linkList = repository.linkList
     val searchLinkList = repository.searchLinkList
     val searchList = repository.searches
-    val tagList = repository.tags
+
+    val tagGroups = repository.tagGroups
+    val tagDefaultGroup = repository.defaultTagGroup
 
     // mode
     var mode: ListMode = ListMode.MODE_ALL
@@ -67,8 +69,8 @@ class SearchLinkViewModel : BasicViewModelWithRepository() {
     fun searchLinkBySearchSet() {
         val keyword = bindingSearchWord.value!!
         repository.searchLinksBySearchSet(keyword, _selectedTags)
-        Log.d("viewModel search start","keyword $keyword")
-        Log.d("viewModel search start","tags $_selectedTags")
+        Log.d("viewModel search start", "keyword $keyword")
+        Log.d("viewModel search start", "tags $_selectedTags")
     }
 
     fun isSearchSetEmpty(): Boolean =

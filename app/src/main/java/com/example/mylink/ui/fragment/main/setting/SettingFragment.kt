@@ -2,16 +2,17 @@ package com.example.mylink.ui.fragment.main.setting
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
-import com.example.mylink.data.model.SettingData
+import com.example.mylink.data.model.SettingItemValue
 import com.example.mylink.databinding.FragmentSettingBinding
 import com.example.mylink.ui.adapter.RecyclerSettingAdapter
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.ui.fragment.main.setting.app_info.AppInfoFragment
 import com.example.mylink.ui.fragment.main.setting.domain.ListDomainFragment
-import com.example.mylink.ui.fragment.main.setting.tag.ListTagFragment
+import com.example.mylink.ui.fragment.main.setting.tag.ListGroupFragment
 
 class SettingFragment : SjBasicFragment<FragmentSettingBinding>() {
-    private val tagFragment = ListTagFragment()
+//    private val tagFragment = ListTagFragment()
+    private val tagGroupFragment = ListGroupFragment()
     private val domainFragment = ListDomainFragment()
     private val appInfoFragment = AppInfoFragment()
 
@@ -24,11 +25,12 @@ class SettingFragment : SjBasicFragment<FragmentSettingBinding>() {
         adapter.setList(getSettingList())
     }
 
-    private fun getSettingList(): List<SettingData> {
+    private fun getSettingList(): List<SettingItemValue> {
         return mutableListOf(
-            SettingData("도메인 목록", ::moveToViewDomains),
-            SettingData("태그 목록", ::moveToViewTags),
-            SettingData("앱 정보 보기", ::moveToViewData),
+            SettingItemValue("도메인 목록", ::moveToViewDomains),
+            SettingItemValue("태그 그룹", ::moveToViewTagGroups),
+//            SettingItemValue("태그 목록", ::moveToViewTags),
+            SettingItemValue("앱 정보 보기", ::moveToViewData),
         )
     }
 
@@ -36,8 +38,12 @@ class SettingFragment : SjBasicFragment<FragmentSettingBinding>() {
         this.moveToOtherFragment(domainFragment)
     }
 
-    private fun moveToViewTags() {
-        this.moveToOtherFragment(tagFragment)
+//    private fun moveToViewTags() {
+//        this.moveToOtherFragment(tagFragment)
+//    }
+
+    private fun moveToViewTagGroups() {
+        this.moveToOtherFragment(tagGroupFragment)
     }
 
     private fun moveToViewData() {

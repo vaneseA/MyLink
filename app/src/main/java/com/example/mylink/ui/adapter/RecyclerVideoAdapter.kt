@@ -6,24 +6,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.mylink.data.model.VideoData
 import com.example.mylink.databinding.ItemVideoListDetailBinding
 import com.example.mylink.ui.adapter.basic.RecyclerBasicAdapter
 import com.example.mylink.ui.adapter.basic.RecyclerBasicViewHolder
-import com.example.mylink.ui.fragment.ListVideoFragment
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 
 class RecyclerVideoAdapter(val player: ExoPlayer, val detailOperation: (Int) -> Unit) :
-    RecyclerBasicAdapter<ListVideoFragment.VideoData, VideoRecyclerViewHolder>() {
+    RecyclerBasicAdapter<VideoData, VideoRecyclerViewHolder>() {
     override fun onBindViewHolder(
         holder: VideoRecyclerViewHolder,
-        item: ListVideoFragment.VideoData
+        item: VideoData
     ) {
         holder.setData(item, detailOperation)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoRecyclerViewHolder {
-        val binding = ItemVideoListDetailBinding.inflate(LayoutInflater.from(parent.context))
+        val binding =
+            ItemVideoListDetailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return VideoRecyclerViewHolder(player, binding)
     }
 }
@@ -35,7 +36,7 @@ class VideoRecyclerViewHolder(val player: ExoPlayer, binding: ItemVideoListDetai
 
     fun playStart() {
         binding.playerView.player = player
-        binding.gradientImageView.visibility = View.GONE
+//        binding.gradientImageView.visibility = View.GONE
         binding.playerView.visibility = View.VISIBLE
         binding.thumbnailImageView.visibility = View.GONE
 
@@ -60,10 +61,10 @@ class VideoRecyclerViewHolder(val player: ExoPlayer, binding: ItemVideoListDetai
     }
 
     @SuppressLint("CheckResult")
-    fun setData(data: ListVideoFragment.VideoData, detailOperation: (Int) -> Unit) {
+    fun setData(data: VideoData, detailOperation: (Int) -> Unit) {
         binding.data = data
         binding.root.setOnClickListener { detailOperation(data.lid) }
-        binding.gradientImageView.visibility = View.INVISIBLE
+//        binding.gradientImageView.visibility = View.INVISIBLE
 
         previewUrl = data.thumbnail
         videoUrl = data.url
@@ -72,8 +73,16 @@ class VideoRecyclerViewHolder(val player: ExoPlayer, binding: ItemVideoListDetai
         binding.thumbnailImageView.visibility = View.VISIBLE
 
         binding.thumbnailImageView.setBackgroundColor(Color.BLACK)
-        Glide.with(itemView.context).load(previewUrl).fitCenter()
-            .into(binding.thumbnailImageView)
+        if (previewUrl.isNotEmpty())
+            Glide.with(itemView.context).load(previewUrl).fitCenter()
+                .into(binding.thumbnailImageView)
+        else {
+            Glide.with(itemView.context)
+                .load(videoUrl)
+                .centerCrop()
+                .override(720, 360)
+                .into(binding.thumbnailImageView)
+        }
 
 //            Glide.with(itemView.context)
 //                .asBitmap()

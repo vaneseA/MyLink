@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
+import com.example.mylink.data.model.SjTagGroupWithTags
 import com.example.mylink.databinding.FragmentSearchBinding
 import com.example.mylink.ui.adapter.recycler.SearchSetAdapter
 import com.example.mylink.ui.component.SjTagChip
@@ -49,10 +50,17 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         binding.emptyTagGroup.visibility = View.GONE
 
         // set tag list
-        viewModel.tagList.observe(viewLifecycleOwner, { setTagList(it) })
+        viewModel.tagGroups.observe(viewLifecycleOwner, {
+            if (viewModel.tagDefaultGroup.value != null)
+                setTagList(viewModel.tagDefaultGroup.value!!, it)
+        })
+        viewModel.tagDefaultGroup.observe(viewLifecycleOwner, {
+            if (viewModel.tagGroups.value != null)
+                setTagList(it, viewModel.tagGroups.value!!)
+        })
         viewModel.bindingTargetTags.observe(viewLifecycleOwner, {
-            if (viewModel.tagList.value != null)
-                setTagList(viewModel.tagList.value!!)
+            if (viewModel.tagGroups.value != null && viewModel.tagDefaultGroup.value != null)
+                setTagList(viewModel.tagDefaultGroup.value!!, viewModel.tagGroups.value!!)
         })
 
         // user input enter(action search) -> search start.
@@ -114,8 +122,11 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         binding.deleteTextView.setOnClickListener(onClickListener)
     }
 
-    private fun setTagList(it: List<SjTag>) {
-        if (it.isNullOrEmpty()) {
+    private fun setTagList(
+        defaultGroup: SjTagGroupWithTags,
+        groups: List<SjTagGroupWithTags>
+    ) {
+        if (groups.isNullOrEmpty() && defaultGroup.tags.isEmpty()) {
             binding.emptyTagGroup.visibility = View.VISIBLE
         } else {
             binding.emptyTagGroup.visibility = View.GONE
@@ -135,11 +146,20 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
             }
 
         binding.tagChipGroup.removeAllViews()
-        for (tag in it) {
-            val chip = SjTagChip(requireContext(), tag)
-            chip.isChecked = viewModel.containsTag(tag)
+        for (def in defaultGroup.tags) {
+            val chip = SjTagChip(requireContext(), def)
+            chip.isChecked = viewModel.containsTag(def)
             chip.setOnCheckedChangeListener(onCheckedListener)
             binding.tagChipGroup.addView(chip)
+        }
+        for (group in groups) {
+            for (tag in group.tags) {
+                val chip = SjTagChip(requireContext(), tag)
+                chip.isChecked = viewModel.containsTag(tag)
+                chip.setOnCheckedChangeListener(onCheckedListener)
+                chip.setText("${group.tagGroup.name}: ${tag.name}")
+                binding.tagChipGroup.addView(chip)
+            }
         }
     }
 
