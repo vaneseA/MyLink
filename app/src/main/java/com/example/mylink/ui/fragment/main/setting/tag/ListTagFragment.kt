@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment
+package com.example.mylink.ui.fragment.main.setting.tag
 
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -7,7 +7,7 @@ import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentListTagBinding
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.viewmodel.TagViewModel
+import com.example.mylink.viewmodel.tag.TagViewModel
 
 
 class ListTagFragment : SjBasicFragment<FragmentListTagBinding>() {

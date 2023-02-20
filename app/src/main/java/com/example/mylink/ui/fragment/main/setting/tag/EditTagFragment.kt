@@ -1,16 +1,12 @@
-package com.example.mylink.ui.fragment
+package com.example.mylink.ui.fragment.main.setting.tag
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentEditTagBinding
-import com.example.mylink.ui.fragment.basic.DataBindingBasicFragment
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.viewmodel.TagViewModel
+import com.example.mylink.viewmodel.tag.TagViewModel
 
 class EditTagFragment : SjBasicFragment<FragmentEditTagBinding>() {
     val viewModel: TagViewModel by viewModels()

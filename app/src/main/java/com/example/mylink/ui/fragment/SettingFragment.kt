@@ -6,7 +6,8 @@ import com.example.mylink.data.model.SettingData
 import com.example.mylink.databinding.FragmentSettingBinding
 import com.example.mylink.ui.adapter.RecyclerSettingAdapter
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.ui.fragment.domain.ListDomainFragment
+import com.example.mylink.ui.fragment.main.setting.domain.ListDomainFragment
+import com.example.mylink.ui.fragment.main.setting.tag.ListTagFragment
 
 class SettingFragment : SjBasicFragment<FragmentSettingBinding>() {
     private val tagFragment = ListTagFragment()

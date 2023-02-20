@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment.domain
+package com.example.mylink.ui.fragment.main.setting.domain
 
 import android.view.View
 import androidx.fragment.app.activityViewModels

@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment.search
+package com.example.mylink.ui.fragment.main.search
 
 import android.graphics.Rect
 import android.view.View

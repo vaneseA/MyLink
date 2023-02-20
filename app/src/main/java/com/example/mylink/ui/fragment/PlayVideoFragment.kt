@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.util.SparseArray
 import com.example.mylink.R
-import com.example.mylink.application.MyLinkApplication
 import com.example.mylink.databinding.FragmentPlayVideoBinding
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import at.huber.youtubeExtractor.VideoMeta
@@ -16,11 +15,8 @@ import at.huber.youtubeExtractor.YtFile
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.*
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
 
 
 class PlayVideoFragment : SjBasicFragment<FragmentPlayVideoBinding>() {

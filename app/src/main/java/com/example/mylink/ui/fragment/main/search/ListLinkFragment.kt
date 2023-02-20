@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment.search
+package com.example.mylink.ui.fragment.main.search
 
 import android.content.Intent
 import android.util.Log
@@ -12,7 +12,7 @@ import com.example.mylink.ui.adapter.recycler.LinkSearchListAdapter
 import com.example.mylink.ui.component.DataState
 import com.example.mylink.ui.component.ViewVisibilityUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.ui.fragment.detail_link.DetailLinkFragment
+import com.example.mylink.ui.fragment.main.search.detail_link.DetailLinkFragment
 import com.example.mylink.viewmodel.search.ListMode
 import com.example.mylink.viewmodel.search.SearchLinkViewModel
 import kotlinx.coroutines.CoroutineScope

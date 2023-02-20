@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment.detail_link
+package com.example.mylink.ui.fragment.main.search.detail_link
 
 import android.content.Intent
 import android.net.Uri
