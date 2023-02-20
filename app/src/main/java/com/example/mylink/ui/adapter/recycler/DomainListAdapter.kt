@@ -1,4 +1,4 @@
-package com.example.mylink.ui.adapter
+package com.example.mylink.ui.adapter.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,7 +8,7 @@ import com.example.mylink.databinding.ItemDomainsBinding
 import com.example.mylink.ui.adapter.basic.RecyclerBasicAdapter
 import com.example.mylink.ui.adapter.basic.RecyclerBasicViewHolder
 
-class RecyclerDomainAdapter(
+class DomainListAdapter(
     private val updateOperation: (Int) -> Unit,
     private val deleteOperation: (SjDomain) -> Unit
 ) : RecyclerBasicAdapter<SjDomain, DomainsViewHolder>() {

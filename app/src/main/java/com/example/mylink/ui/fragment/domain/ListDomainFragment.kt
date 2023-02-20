@@ -1,4 +1,4 @@
-package com.example.mylink.ui.fragment
+package com.example.mylink.ui.fragment.domain
 
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjDomain
 import com.example.mylink.databinding.FragmentListDomainBinding
-import com.example.mylink.ui.adapter.RecyclerDomainAdapter
+import com.example.mylink.ui.adapter.recycler.DomainListAdapter
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.viewmodel.DomainViewModel
+import com.example.mylink.viewmodel.domain.DomainViewModel
 
 class ListDomainFragment : SjBasicFragment<FragmentListDomainBinding>() {
     val viewModel: DomainViewModel by activityViewModels()
@@ -21,7 +21,7 @@ class ListDomainFragment : SjBasicFragment<FragmentListDomainBinding>() {
         val handlerMap = hashMapOf<Int, ()->Unit>(R.id.menu_add to ::moveToAddFragment)
         binding.toolbar.setMenu(R.menu.toolbar_menu_add, handlerMap = handlerMap)
         // set recyclerView
-        val adapter = RecyclerDomainAdapter(
+        val adapter = DomainListAdapter(
             ::moveToEditDomainFragment,
             ::deleteDomain
         )

@@ -1,4 +1,4 @@
-package com.example.mylink.ui.adapter
+package com.example.mylink.ui.adapter.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,22 +10,23 @@ import com.example.mylink.databinding.ItemLinkSearchBinding
 import com.example.mylink.ui.adapter.basic.RecyclerBasicAdapter
 import com.example.mylink.ui.adapter.basic.RecyclerBasicViewHolder
 
-class RecyclerSearchLinkAdapter(
+
+class LinkSearchListAdapter(
     private val detailOperation: (Int) -> Unit,
 ) :
-    RecyclerBasicAdapter<SjLinksAndDomainsWithTags, LinksSearchViewHolder>() {
+    RecyclerBasicAdapter<SjLinksAndDomainsWithTags, LinkSearchListViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LinksSearchViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LinkSearchListViewHolder {
         val binding = ItemLinkSearchBinding.inflate(LayoutInflater.from(parent.context))
-        return LinksSearchViewHolder(binding)
+        return LinkSearchListViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: LinksSearchViewHolder, item: SjLinksAndDomainsWithTags) {
+    override fun onBindViewHolder(holder: LinkSearchListViewHolder, item: SjLinksAndDomainsWithTags) {
         holder.setLink(item, detailOperation)
     }
 }
 
-class LinksSearchViewHolder(binding: ItemLinkSearchBinding) :
+class LinkSearchListViewHolder(binding: ItemLinkSearchBinding) :
     RecyclerBasicViewHolder<ItemLinkSearchBinding>(binding) {
 
     fun setLink(

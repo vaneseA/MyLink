@@ -1,18 +1,12 @@
 package com.example.mylink.ui.fragment
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.mylink.R
-import com.example.mylink.data.model.SjLink
-import com.example.mylink.data.model.SjTag
 import com.example.mylink.databinding.FragmentDetailVideoBinding
-import com.example.mylink.ui.activity.EditLinkActivity
-import com.example.mylink.ui.fragment.PlayVideoFragment
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
-import com.example.mylink.viewmodel.DetailLinkViewModel
+import com.example.mylink.viewmodel.detail_link.DetailLinkViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 
@@ -35,6 +29,7 @@ class DetailVideoFragment : SjBasicFragment<FragmentDetailVideoBinding>() {
 
     override fun layoutId(): Int = R.layout.fragment_detail_video
 
+
     override fun onCreateView() {
         // get lid from argument
         lid = requireArguments().getInt("lid", -1)
@@ -42,17 +37,26 @@ class DetailVideoFragment : SjBasicFragment<FragmentDetailVideoBinding>() {
             viewModel.loadLinkData(lid)
         }
 
-        viewModel.link.observe(viewLifecycleOwner,{
-            val fullUrl = it.domain.url+ it.link.url
+        viewModel.bindingFullUrl.observe(viewLifecycleOwner,{ fullUrl->
             val mediaItem = MediaItem.fromUri(fullUrl)
             player.setMediaItem(mediaItem)
             player.prepare()
         })
 
-        // set variable of binding
-        binding.viewModel = viewModel
+
+        //        schedulePreloadWork("https://www.youtube.com/watch?v=H0M1yU6uO30")
 
     }
+
+    //    private fun schedulePreloadWork(videoUrl: String) {
+//        val workManager = WorkManager.getInstance(requireActivity().applicationContext)
+//        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoUrl)
+//        workManager.enqueueUniqueWork(
+//            "VideoPreloadWorker",
+//            ExistingWorkPolicy.KEEP,
+//            videoPreloadWorker
+//        )
+//    }
 
     override fun onStart() {
         super.onStart()
@@ -77,11 +81,7 @@ class DetailVideoFragment : SjBasicFragment<FragmentDetailVideoBinding>() {
         // release player
         player.release()
         _player = null
-
-        // clear viewModel data when screen not visible
-        viewModel.clearData()
     }
-
 
     private fun moveToPlayFragment() {
         val url = "https://www.youtube.com/watch?v=H0M1yU6uO30"

@@ -18,17 +18,21 @@ class EditVideoViewModel : BasicViewModelWithRepository() {
     // model list
     val tagList = repository.tags
 
+    // default type
+    private val defaultType = ELinkType.link
+
     // Model to Save
-    private var targetLink = SjLink(lid = 0, did = -1, name = "", url = "", type = ELinkType.video)
+    private var targetLink = SjLink(lid = 0, did = -1, name = "", url = "", type = defaultType)
     private var targetDomain = SjDomain(did = 1, name = "", url = "")
     private val targetTags = mutableListOf<SjTag>()
 
     // binding live data
     private val _previewImage = MutableLiveData<String>()
+    private val _bindingUrl = MutableLiveData("")
     val bindingPreviewImage: LiveData<String> get() = _previewImage
+    val bindingUrl: LiveData<String> get() = _bindingUrl
     val bindingName = MutableLiveData<String>()
-    val bindingIsVideo = MutableLiveData(true)
-    val bindingUrl = targetDomain.url + targetLink.url
+    val bindingIsVideo = MutableLiveData(defaultType == ELinkType.video)
 
 
     init {
@@ -38,8 +42,10 @@ class EditVideoViewModel : BasicViewModelWithRepository() {
 
         bindingIsVideo.observeForever {
             targetLink.type =
-                if (it) ELinkType.video
-                else ELinkType.link
+                when (it) {
+                    true -> ELinkType.video
+                    false -> ELinkType.link
+                }
         }
     }
 
@@ -47,6 +53,7 @@ class EditVideoViewModel : BasicViewModelWithRepository() {
     fun createLinkByUrl(url: String) {
         viewModelScope.launch(Dispatchers.IO) {
             targetLink.url = url
+            _bindingUrl.postValue(url)
 
             // load title of url site
             launch {
@@ -90,6 +97,7 @@ class EditVideoViewModel : BasicViewModelWithRepository() {
 
     private fun setLink(link: SjLink) {
         targetLink = link
+        _bindingUrl.postValue(link.url)
         bindingName.postValue(link.name)
         _previewImage.postValue(link.preview)
         bindingIsVideo.postValue(link.type == ELinkType.video)

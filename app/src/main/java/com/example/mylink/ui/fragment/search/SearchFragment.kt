@@ -16,7 +16,6 @@ import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.search.SearchLinkViewModel
 
-
 class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
     val viewModel: SearchLinkViewModel by activityViewModels()
 
@@ -45,14 +44,15 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         // set auto focus on Search Field
         binding.searchEditText.requestFocus()
 
+        // hide empty views
+        binding.emptySearchSetGroup.visibility = View.GONE
+        binding.emptyTagGroup.visibility = View.GONE
+
         // set tag list
-        viewModel.tagList.observe(viewLifecycleOwner, {
-            setTagList(it)
-        })
-        viewModel.targetTags.observe(viewLifecycleOwner, {
-            if (viewModel.tagList.value != null) {
+        viewModel.tagList.observe(viewLifecycleOwner, { setTagList(it) })
+        viewModel.bindingTargetTags.observe(viewLifecycleOwner, {
+            if (viewModel.tagList.value != null)
                 setTagList(viewModel.tagList.value!!)
-            }
         })
 
         // user input enter(action search) -> search start.
@@ -99,6 +99,11 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         binding.recentSearchedRecyclerView.adapter = adapter
         viewModel.searchList.observe(viewLifecycleOwner,
             {
+                if (it.isNullOrEmpty()) {
+                    binding.emptySearchSetGroup.visibility = View.VISIBLE
+                } else {
+                    binding.emptySearchSetGroup.visibility = View.GONE
+                }
                 adapter.setList(it)
             }
         )
@@ -110,6 +115,11 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
     }
 
     private fun setTagList(it: List<SjTag>) {
+        if (it.isNullOrEmpty()) {
+            binding.emptyTagGroup.visibility = View.VISIBLE
+        } else {
+            binding.emptyTagGroup.visibility = View.GONE
+        }
         val onCheckedListener =
             CompoundButton.OnCheckedChangeListener { btn, isChecked ->
                 val chip = btn as SjTagChip

@@ -87,11 +87,6 @@ interface SjDao {
         size: Int = tags.size
     ): List<Int>
 
-    fun tt (){
-        val list = listOf<String>()
-        list.size
-    }
-
     // search link query by link name and tags
     @Transaction
     @Query(
@@ -99,16 +94,18 @@ interface SjDao {
                 + "INNER JOIN linkTagCrossRef as ref ON link.lid = ref.lid "
                 + "INNER JOIN SjTag as tag ON ref.tid = tag.tid "
                 + "WHERE link.name LIKE :keyword "
-                + "AND tag.tid IN(:tags)"
-                + "GROUP BY link.lid" //prevent duplicates
+                + "AND tag.tid IN(:tags) "
+                + "GROUP BY link.lid " //prevent duplicates
+                + "HAVING count(*) == :size "
+                + "ORDER BY link.lid desc"
     )
     suspend fun searchLinksAndDomainsWithTagsByLinkNameAndTags(
-        keyword: String, tags: List<Int>
+        keyword: String, tags: List<Int>, size: Int
     ): List<SjLinksAndDomainsWithTags>
 
     // search link query by link name
     @Transaction
-    @Query("SELECT * FROM SjLink WHERE name LIKE :keyword")
+    @Query("SELECT * FROM SjLink WHERE name LIKE :keyword ORDER BY lid desc")
     suspend fun searchLinksAndDomainsWithTagsByLinkName(
         keyword: String
     ): List<SjLinksAndDomainsWithTags>
@@ -210,7 +207,7 @@ interface SjDao {
 
     @Transaction
     @Query("SELECT * FROM SjLink WHERE Type = :type ORDER BY lid desc")
-    fun getAllLinksByType(type:String): LiveData<List<SjLinksAndDomainsWithTags>>
+    fun getAllLinksByType(type: String): LiveData<List<SjLinksAndDomainsWithTags>>
 
 
 }

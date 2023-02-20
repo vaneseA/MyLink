@@ -1,5 +1,6 @@
 package com.example.mylink.viewmodel.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mylink.data.model.SjLink
@@ -26,7 +27,7 @@ class SearchLinkViewModel : BasicViewModelWithRepository() {
     val bindingSearchWord = MutableLiveData("")
     private var _selectedTags = mutableListOf<SjTag>()
     private val _targetTags = MutableLiveData(_selectedTags)
-    val targetTags: LiveData<MutableList<SjTag>> get() = _targetTags
+    val bindingTargetTags: LiveData<MutableList<SjTag>> get() = _targetTags
 
     //  update tag selection
     fun addTag(tag: SjTag) {
@@ -66,6 +67,8 @@ class SearchLinkViewModel : BasicViewModelWithRepository() {
     fun searchLinkBySearchSet() {
         val keyword = bindingSearchWord.value!!
         repository.searchLinksBySearchSet(keyword, _selectedTags)
+        Log.d("viewModel search start","keyword $keyword")
+        Log.d("viewModel search start","tags $_selectedTags")
     }
 
     fun isSearchSetEmpty(): Boolean =

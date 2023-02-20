@@ -1,5 +1,6 @@
 package com.example.mylink.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mylink.data.dao.SjDao
@@ -129,6 +130,8 @@ class SjRepository private constructor() {
             "%$keyword%"
         )
         _searchLinkList.postValue(result)
+        Log.d("repository search","with keyword")
+        Log.d("repository search","result $result")
     }
 
     private suspend fun searchByLinkNameAndTags(keyword: String, selectedTags: List<SjTag>) {
@@ -137,9 +140,11 @@ class SjRepository private constructor() {
             list.add(tag.tid)
         }
         val result = dao.searchLinksAndDomainsWithTagsByLinkNameAndTags(
-            "%$keyword%", list
+            "%$keyword%", list, list.size
         )
         _searchLinkList.postValue(result)
+        Log.d("repository search","with keyword and tags")
+        Log.d("repository search","result $result")
     }
 
 

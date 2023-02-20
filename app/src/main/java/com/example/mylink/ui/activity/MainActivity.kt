@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.mylink.R
 import com.example.mylink.databinding.ActivityMainBinding
 import com.example.mylink.ui.activity.basic.SjBasicActivity
-import com.example.mylink.ui.fragment.ListLinkFragment
+import com.example.mylink.ui.fragment.search.ListLinkFragment
 import com.example.mylink.ui.fragment.ListVideoFragment
 import com.example.mylink.ui.fragment.SettingFragment
 import com.example.mylink.viewmodel.search.SearchLinkViewModel
