@@ -42,7 +42,7 @@ abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
     // parent fragment control methods
     protected fun moveToOtherFragment(fragment:Fragment){
         parentFragmentManager.commit{
-            replace(R.id.fragmentContainer, fragment)
+            replace(fragmentContainer(), fragment)
             setReorderingAllowed(true)
             addToBackStack(getClassName())
         }
@@ -57,5 +57,8 @@ abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
 
     /** onCreate()에서 할 일이 있다면 여기서. */
     protected abstract fun onCreateView()
+
+    /** fragmentContainer의 layout id를 반환. */
+    abstract fun fragmentContainer(): Int
 
 }
