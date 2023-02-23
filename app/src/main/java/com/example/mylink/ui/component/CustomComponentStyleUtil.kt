@@ -7,7 +7,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
 
 class CustomComponentStyleUtil {
-
+//
     companion object{
         fun setMaterialCustomToolbarStyle(toolbar:MaterialToolbar){
             val context = toolbar.context
