@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.Toast
 import com.example.mylink.R
 import com.example.mylink.databinding.FragmentEditPasteBinding
-import com.example.mylink.linksaver.ui.component.LinkPasteBottomSheet
+import com.example.mylink.ui.component.LinkPasteBottomSheet
 import com.example.mylink.ui.component.SjClipboard
 import com.example.mylink.ui.component.SjUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment

@@ -61,7 +61,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clipboardIconImageView">
 
-        <TextView
+        <EditText
             android:id="@+id/urlTextView"
             style="@style/important3"
             android:layout_width="match_parent"

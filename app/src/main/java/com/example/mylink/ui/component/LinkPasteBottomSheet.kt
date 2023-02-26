@@ -1,4 +1,4 @@
-package com.example.mylink.linksaver.ui.component
+package com.example.mylink.ui.component
 
 import android.os.Bundle
 import android.view.LayoutInflater
