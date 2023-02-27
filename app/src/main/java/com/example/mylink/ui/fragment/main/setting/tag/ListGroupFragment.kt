@@ -1,5 +1,6 @@
 package com.example.mylink.ui.fragment.main.setting.tag
 
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
@@ -36,6 +37,11 @@ class ListGroupFragment : SjBasicFragment<FragmentListTagGroupBinding>() {
         )
         binding.tagGroupRecyclerView.adapter = adapter
         viewModel.tagGroups.observe(viewLifecycleOwner, {
+            if (it.isNullOrEmpty()) {
+                binding.emptyGroup.visibility = View.VISIBLE
+            } else {
+                binding.emptyGroup.visibility = View.GONE
+            }
             adapter.setList(it)
         })
     }

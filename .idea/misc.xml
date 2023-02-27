@@ -22,6 +22,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_swap_horiz_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_browse_folder.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_clipboard_48.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_delete__4_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_down.xml" value="0.1" />
@@ -33,10 +34,13 @@
         <entry key="app/src/main/res/drawable/ic_icons8_lock.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_menu_vertical.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_no_image_100.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_opened_folder.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_play__1_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_up.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_video.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_video__1_.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_video_playlist.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_window_search.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_edit_link.xml" value="0.21822916666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1625" />
         <entry key="app/src/main/res/layout/activity_share_link.xml" value="0.203125" />

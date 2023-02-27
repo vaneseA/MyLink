@@ -27,7 +27,7 @@ class SjRepository private constructor() {
     val defaultTagGroup: LiveData<SjTagGroupWithTags> = dao.getBasicTagGroupWithTags()
     val linkList: LiveData<List<SjLinksAndDomainsWithTags>> = dao.getAllLinksAndDomainsWithTags()
 
-    val linkTypeVideoList = dao.getAllLinksByType(ELinkType.video.name)
+
     val linkTypeLinkList = dao.getAllLinksByType(ELinkType.link.name)
 
     companion object {

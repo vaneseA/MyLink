@@ -1,4 +1,4 @@
-package com.example.mylink.ui.adapter
+package com.example.mylink.ui.adapter.recycler
 
 import android.content.Context
 import android.graphics.Color
@@ -13,33 +13,33 @@ import com.example.mylink.ui.adapter.basic.RecyclerBasicAdapter
 import com.example.mylink.ui.adapter.basic.RecyclerBasicViewHolder
 import com.google.android.exoplayer2.ExoPlayer
 
-class RecyclerVideoAdapter(
+class VideoListAdapter(
     private val player: ExoPlayer,
     private val detailOperation: (Int) -> Unit
 ) :
-    RecyclerBasicAdapter<VideoData, VideoRecyclerViewHolder>() {
+    RecyclerBasicAdapter<VideoData, VideoViewHolder>() {
     override fun onBindViewHolder(
-        holder: VideoRecyclerViewHolder,
+        holder: VideoViewHolder,
         item: VideoData
     ) {
     }
 
     override fun onBindViewHolder(
-        holder: VideoRecyclerViewHolder,
+        holder: VideoViewHolder,
         position: Int,
         payloads: MutableList<Any>
     ) {
         holder.setData(position, itemList[position], detailOperation)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoRecyclerViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val binding =
             ItemVideoListDetailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return VideoRecyclerViewHolder(player, binding)
+        return VideoViewHolder(player, binding)
     }
 }
 
-class VideoRecyclerViewHolder(private val player: ExoPlayer, binding: ItemVideoListDetailBinding) :
+class VideoViewHolder(private val player: ExoPlayer, binding: ItemVideoListDetailBinding) :
     RecyclerBasicViewHolder<ItemVideoListDetailBinding>(binding) {
 
     private var index: Int = -1
