@@ -1,6 +1,5 @@
 package com.example.mylink.viewmodel.domain
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.mylink.data.model.SjDomain

@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import com.example.mylink.R
+
 
 abstract class DataBindingBasicFragment<T : ViewDataBinding> : Fragment() {
     private var _binding: T? = null

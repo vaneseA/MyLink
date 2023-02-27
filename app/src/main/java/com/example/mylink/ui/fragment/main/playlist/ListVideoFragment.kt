@@ -1,8 +1,7 @@
-package com.example.mylink.ui.fragment.playlist
+package com.example.mylink.ui.fragment.main.playlist
 
 import android.util.Log
 import android.widget.Toast
-import androidx.core.graphics.toColorInt
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

@@ -8,7 +8,6 @@ import com.example.mylink.data.model.SjSearch
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 
-
 // enum to save mode status
 enum class ListMode {
     MODE_ALL, MODE_SEARCH;

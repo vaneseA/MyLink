@@ -1,12 +1,10 @@
 package com.example.mylink.application
 
 import android.app.Application
-import com.example.mylink.data.db.SjDatabase
 import com.example.mylink.data.db.SjDatabaseUtil
 import com.example.mylink.data.model.SjDomain
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import kotlinx.coroutines.*
 
 class MyLinkApplication : Application() {

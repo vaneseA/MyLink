@@ -72,8 +72,8 @@ class EditLinkAndVideoFragment : SjBasicFragment<FragmentEditVideoBinding>() {
                 this.addTagsToChipGroupChildren(viewModel.tagDefaultGroup.value!!, it)
         })
         viewModel.tagDefaultGroup.observe(viewLifecycleOwner, {
-            if(viewModel.tagGroups.value!=null)
-                this.addTagsToChipGroupChildren(it, viewModel.tagGroups.value!!)
+//            if(viewModel.tagGroups.value!=null)
+//                this.addTagsToChipGroupChildren(it, viewModel.tagGroups.value!!)
         })
 
     }

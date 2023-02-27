@@ -12,7 +12,7 @@ import com.example.mylink.ui.fragment.basic.SjBasicFragment
 
 class EditLinkPasteFragment : SjBasicFragment<FragmentEditPasteBinding>() {
 
-    private var bottomSheet : LinkPasteBottomSheet? = null
+    private var bottomSheet :LinkPasteBottomSheet? = null
 
     override fun layoutId(): Int = R.layout.fragment_edit_paste
 
@@ -23,7 +23,7 @@ class EditLinkPasteFragment : SjBasicFragment<FragmentEditPasteBinding>() {
         binding.pasteImageView.setOnClickListener(pasteHandler)
         binding.pasteTextView.setOnClickListener(pasteHandler)
     }
-//
+
     private fun openClipBoard() {
         val clipboard = SjClipboard.getClipboardManager(requireContext())
 

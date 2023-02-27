@@ -2,7 +2,6 @@ package com.example.mylink.viewmodel
 
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.data.model.VideoData
-import com.example.mylink.ui.fragment.playlist.ListVideoFragment
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 
 class ListVideoViewModel : BasicViewModelWithRepository() {
