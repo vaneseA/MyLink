@@ -7,7 +7,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.mylink.data.db.SjDatabase
 import com.example.mylink.data.model.*
 
-
 @Dao
 interface SjDao {
     // get All Entities from Database
@@ -51,6 +50,8 @@ interface SjDao {
     fun getNotPrivateTagGroupsWithTags()
             : LiveData<List<SjTagGroupWithTags>>
 
+    @Query("SELECT COUNT(*) FROM SjTagGroup")
+    suspend fun getTagGroupCount(): Int
 
     @Query("SELECT COUNT(*) FROM SjDomain")
     suspend fun getDomainCount(): Int

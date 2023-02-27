@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/drawable/bg_gradient_black.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/bg_shape_search_edit_text.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/bg_shape_searchsett.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/gray_shimmer_rounded_square.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/gray_shimmer_square.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_link_24.xml" value="0.1565" />
         <entry key="app/src/main/res/drawable/ic_baseline_announcement_24.xml" value="0.101" />
@@ -80,6 +81,7 @@
         <entry key="app/src/main/res/layout/item_video_list_detail_original.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/layout_search_set.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/shimmer_link_search.xml" value="0.14739583333333334" />
+        <entry key="app/src/main/res/layout/shimmer_video_list_detail.xml" value="0.21666666666666667" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.203125" />
         <entry key="app/src/main/res/menu/menu_link_datail.xml" value="0.234375" />
         <entry key="app/src/main/res/menu/popup_menu_tag_group.xml" value="0.439453125" />

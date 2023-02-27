@@ -8,13 +8,13 @@ import com.bumptech.glide.Glide
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.data.model.SjTagGroupWithTags
-import com.example.mylink.databinding.FragmentEditVideoBinding
+import com.example.mylink.databinding.FragmentEditLinkBinding
 import com.example.mylink.ui.component.EditTagDialogFragment
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.edit_link.EditVideoViewModel
 
-class EditLinkAndVideoFragment : SjBasicFragment<FragmentEditVideoBinding>() {
+class EditLinkAndVideoFragment : SjBasicFragment<FragmentEditLinkBinding>() {
 
     val viewModel: EditVideoViewModel by activityViewModels()
 
@@ -29,7 +29,7 @@ class EditLinkAndVideoFragment : SjBasicFragment<FragmentEditVideoBinding>() {
         }
     }
 
-    override fun layoutId(): Int = R.layout.fragment_edit_video
+    override fun layoutId(): Int = R.layout.fragment_edit_link
 
     override fun onCreateView() {
 
@@ -72,8 +72,8 @@ class EditLinkAndVideoFragment : SjBasicFragment<FragmentEditVideoBinding>() {
                 this.addTagsToChipGroupChildren(viewModel.tagDefaultGroup.value!!, it)
         })
         viewModel.tagDefaultGroup.observe(viewLifecycleOwner, {
-//            if(viewModel.tagGroups.value!=null)
-//                this.addTagsToChipGroupChildren(it, viewModel.tagGroups.value!!)
+            if(viewModel.tagGroups.value!=null)
+                this.addTagsToChipGroupChildren(it, viewModel.tagGroups.value!!)
         })
 
     }
