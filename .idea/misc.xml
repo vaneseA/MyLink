@@ -22,7 +22,17 @@
         <entry key="app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_swap_horiz_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_1st.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_browse_folder.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_0.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_2.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_3.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_4.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_5.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_6.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_7.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_8.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_icons8_circled_9.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_clipboard_48.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_delete__4_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_icons8_down.xml" value="0.1" />
@@ -43,6 +53,7 @@
         <entry key="app/src/main/res/drawable/ic_icons8_window_search.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_edit_link.xml" value="0.21822916666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1625" />
+        <entry key="app/src/main/res/layout/activity_plain.xml" value="0.11354166666666667" />
         <entry key="app/src/main/res/layout/activity_share_link.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/activity_view_link.xml" value="0.2175925925925926" />
@@ -64,6 +75,8 @@
         <entry key="app/src/main/res/layout/fragment_list_tag.xml" value="0.14739583333333334" />
         <entry key="app/src/main/res/layout/fragment_list_tag_group.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_list_video.xml" value="0.14739583333333334" />
+        <entry key="app/src/main/res/layout/fragment_lock.xml" value="0.11354166666666667" />
+        <entry key="app/src/main/res/layout/fragment_personal_setting.xml" value="0.11354166666666667" />
         <entry key="app/src/main/res/layout/fragment_play_video.xml" value="0.14739583333333334" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_setting.xml" value="0.14739583333333334" />
@@ -90,6 +103,7 @@
         <entry key="app/src/main/res/menu/menu_link_datail.xml" value="0.234375" />
         <entry key="app/src/main/res/menu/popup_menu_tag_group.xml" value="0.439453125" />
         <entry key="app/src/main/res/menu/toolbar_menu_add.xml" value="0.14739583333333334" />
+        <entry key="app/src/main/res/menu/toolbar_menu_detail_link.xml" value="0.11354166666666667" />
         <entry key="app/src/main/res/menu/toolbar_menu_edit.xml" value="0.203125" />
         <entry key="app/src/main/res/menu/toolbar_menu_tag.xml" value="0.203125" />
         <entry key="app/src/main/res/menu/toolbar_menu_tag_group.xml" value="0.203125" />

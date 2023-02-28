@@ -10,14 +10,6 @@ import kotlinx.coroutines.*
 
 class MyLinkApplication : Application() {
 
-    private val cacheSize: Long = 90 * 1024 * 1024
-    private lateinit var cacheEvictor: LeastRecentlyUsedCacheEvictor
-    private lateinit var exoplayerDatabaseProvider: ExoDatabaseProvider
-
-    companion object{
-//        lateinit var cache: SimpleCache
-    }
-
     override fun onCreate() {
         super.onCreate()
 
@@ -41,11 +33,6 @@ class MyLinkApplication : Application() {
                 SjDatabaseUtil.getDao().insertTagGroup(SjTagGroup(gid = 1, name = "-", isPrivate = false))
             }
         }
-
-        //cache of video
-//        cacheEvictor = LeastRecentlyUsedCacheEvictor(cacheSize)
-//        exoplayerDatabaseProvider = ExoDatabaseProvider(this)
-//        cache = SimpleCache(cacheDir, cacheEvictor, exoplayerDatabaseProvider)
     }
 
     override fun onTerminate() {
@@ -56,4 +43,6 @@ class MyLinkApplication : Application() {
         //백그라운드로 갔을 때도 닫아야 할까?
         SjDatabaseUtil.closeDatabase()
     }
+
+
 }
