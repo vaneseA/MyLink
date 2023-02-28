@@ -8,6 +8,7 @@ import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 
 class ListGroupViewModel : BasicViewModelWithRepository() {
     val tagGroups = repository.tagGroups
+    val publicTagGroups = repository.publicTagGroups
 
     // data binding live data
     private val _bindingBasicTagGroup = repository.defaultTagGroup

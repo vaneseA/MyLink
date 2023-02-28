@@ -4,6 +4,8 @@ import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylink.R
 import com.example.mylink.data.model.SjLinksAndDomainsWithTags
@@ -14,15 +16,15 @@ import com.example.mylink.ui.component.DataState
 import com.example.mylink.ui.component.ViewVisibilityUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.ui.fragment.main.search.detail_link.DetailLinkFragment
+import com.example.mylink.viewmodel.SettingViewModel
 import com.example.mylink.viewmodel.search.ListMode
 import com.example.mylink.viewmodel.search.SearchLinkViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 
 class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
     private val viewModel: SearchLinkViewModel by activityViewModels()
+    private val settingViewModel: SettingViewModel by viewModels()
 
     // control view visibility
     private lateinit var viewUtil: ViewVisibilityUtil
@@ -32,15 +34,21 @@ class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
 
     override fun onStart() {
         super.onStart()
-        Log.d("onStart","search start, shimmer started")
-        if(viewModel.mode==ListMode.MODE_SEARCH){
+        Log.d("onStart", "search start, shimmer started")
+        if (viewModel.mode == ListMode.MODE_SEARCH) {
             viewUtil.state = DataState.LOADING
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (viewModel.mode == ListMode.MODE_SEARCH)
+            viewModel.searchLinkBySearchSet()
+    }
+
     override fun onCreateView() {
         // set binding variable
-        binding.viewModel=viewModel
+        binding.viewModel = viewModel
 
         // set recycler view
         val adapter = LinkSearchListAdapter(
@@ -56,18 +64,9 @@ class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
             emptyView = binding.emptyGroup
         )
 
-        // set list when Mode ALL
-        viewModel.linkList.observe(viewLifecycleOwner,
-            {
-                if (viewModel.mode == ListMode.MODE_ALL) {
-                    adapter.setList(it)
-                    delayAndViewVisibleControl(it)
-                }
-            }
-        )
-
         // set list when Mode SEARCH
-        viewModel.searchLinkList.observe(viewLifecycleOwner,
+        val searchLiveData = viewModel.searchLinkList
+        searchLiveData.observe(viewLifecycleOwner,
             {
                 if (viewModel.mode == ListMode.MODE_SEARCH) {
                     adapter.setList(it)
@@ -76,11 +75,28 @@ class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
             }
         )
 
-        viewModel.bindingTargetTags.observe(viewLifecycleOwner,{
-            if(it.isNullOrEmpty()){
-                binding.cancelSearchSetImageView.visibility= View.GONE
-            }else{
-                binding.cancelSearchSetImageView.visibility= View.VISIBLE
+        lifecycleScope.launch {
+            val isPrivateModeDeferred =
+                async(Dispatchers.IO) { settingViewModel.privateFlow.first() }
+            val isPrivateMode = isPrivateModeDeferred.await()
+
+            // set list when Mode ALL
+            val allLiveData = if (isPrivateMode) viewModel.publicLinkList
+            else viewModel.linkList
+            allLiveData.observe(viewLifecycleOwner,
+                {
+                    if (viewModel.mode == ListMode.MODE_ALL) {
+                        adapter.setList(it)
+                        delayAndViewVisibleControl(it)
+                    }
+                }
+            )
+        }
+        viewModel.bindingTargetTags.observe(viewLifecycleOwner, {
+            if (it.isNullOrEmpty()) {
+                binding.cancelSearchSetImageView.visibility = View.GONE
+            } else {
+                binding.cancelSearchSetImageView.visibility = View.VISIBLE
             }
         })
 
@@ -99,10 +115,10 @@ class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
             delay(500)
             if (dataList.isEmpty()) {
                 viewUtil.state = DataState.EMPTY
-                Log.d("search ended","empty")
+                Log.d("search ended", "empty")
             } else {
                 viewUtil.state = DataState.LOADED
-                Log.d("search ended","list")
+                Log.d("search ended", "list")
             }
         }
     }

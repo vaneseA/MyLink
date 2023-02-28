@@ -10,13 +10,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-
 class EditVideoViewModel : BasicViewModelWithRepository() {
     // repo
     private val networkRepository = SjNetworkRepository.newInstance()
 
     // model list
     val tagGroups = repository.tagGroups
+    val publicTagGroups = repository.publicTagGroups
     val tagDefaultGroup = repository.defaultTagGroup
 
     // default type

@@ -3,8 +3,6 @@ package com.example.mylink.viewmodel.search
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.mylink.data.model.SjLink
-import com.example.mylink.data.model.SjSearch
 import com.example.mylink.data.model.SjTag
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
 
@@ -14,15 +12,23 @@ enum class ListMode {
 }
 
 class SearchLinkViewModel : BasicViewModelWithRepository() {
+
     val linkList = repository.linkList
+    val publicLinkList = repository.publicLinkList
     val searchLinkList = repository.searchLinkList
     val searchList = repository.searches
+    val publicSearchList = repository.publicSearches
 
+    // mode all
     val tagGroups = repository.tagGroups
+
+    // private mode on
+    val publicTagGroups = repository.publicTagGroups
     val tagDefaultGroup = repository.defaultTagGroup
 
     // mode
     var mode: ListMode = ListMode.MODE_ALL
+    var isPrivateMode: Boolean? = null
 
     // to save
     val bindingSearchWord = MutableLiveData("")
@@ -67,7 +73,7 @@ class SearchLinkViewModel : BasicViewModelWithRepository() {
 
     fun searchLinkBySearchSet() {
         val keyword = bindingSearchWord.value!!
-        repository.searchLinksBySearchSet(keyword, _selectedTags)
+        repository.searchLinksBySearchSet(keyword, _selectedTags, isPrivateMode!!)
         Log.d("viewModel search start", "keyword $keyword")
         Log.d("viewModel search start", "tags $_selectedTags")
     }
@@ -83,7 +89,7 @@ class SearchLinkViewModel : BasicViewModelWithRepository() {
         )
     }
 
-    fun clearSearchSet(){
+    fun clearSearchSet() {
         initData()
         searchLinkBySearchSet()
     }

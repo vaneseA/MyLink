@@ -27,6 +27,10 @@ interface SjDao {
     fun getAllSearch(): LiveData<List<SjSearchWithTags>>
 
     @Transaction
+    @Query("SELECT * FROM SjSearch WHERE sid NOT IN (SELECT sid FROM SearchTagCrossRef as ref WHERE ref.tid NOT IN (SELECT tag.tid FROM SjTag as tag WHERE tag.gid NOT IN (SELECT g.gid FROM SjTagGroup as g WHERE is_private = 1))) ORDER BY sid DESC")
+    fun getPublicSearch(): LiveData<List<SjSearchWithTags>>
+
+    @Transaction
     @Query("SELECT * FROM SjSearch ORDER BY sid DESC")
     fun getAllSearchForTest(): List<SjSearchWithTags>
 
@@ -36,9 +40,18 @@ interface SjDao {
             : LiveData<List<SjLinksAndDomainsWithTags>>
 
     @Transaction
+    @Query("SELECT * FROM SjLink WHERE lid NOT IN (SELECT ref.lid FROM LinkTagCrossRef as ref WHERE ref.tid NOT IN (SELECT tag.tid FROM SjTag as tag WHERE tag.gid NOT IN (SELECT g.gid FROM SjTagGroup as g WHERE is_private = 1))) ORDER BY lid DESC")
+    fun getPublicLinksAndDomainsWithTags()
+            : LiveData<List<SjLinksAndDomainsWithTags>>
+
+    @Transaction
     @Query("SELECT * FROM SjTagGroup WHERE gid != 1 ORDER BY name")
     fun getTagGroupsWithTags()
             : LiveData<List<SjTagGroupWithTags>>
+
+    @Transaction
+    @Query("SELECT * FROM SjTagGroup WHERE gid != 1 AND is_private = 0 ORDER BY name")
+    fun getTagGroupsWithTagsNotPrivate(): LiveData<List<SjTagGroupWithTags>>
 
     @Transaction
     @Query("SELECT * FROM SjTagGroup ORDER BY name")
@@ -122,10 +135,32 @@ interface SjDao {
         keyword: String, tags: List<Int>, size: Int
     ): List<SjLinksAndDomainsWithTags>
 
+    @Transaction
+    @Query(
+        "SELECT link.lid, link.name, link.did, link.url, link.icon, link.preview, link.type FROM SjLink as link "
+                + "INNER JOIN linkTagCrossRef as ref ON link.lid = ref.lid "
+                + "INNER JOIN SjTag as tag ON ref.tid = tag.tid "
+                + "WHERE link.name LIKE :keyword "
+                + "AND tag.tid IN(:tags) " +
+                "AND link.lid NOT IN(SELECT ref.lid FROM LinkTagCrossRef as ref WHERE ref.tid NOT IN (SELECT tag.tid FROM SjTag as tag WHERE tag.gid NOT IN (SELECT g.gid FROM SjTagGroup as g WHERE is_private = 1))) "
+                + "GROUP BY link.lid " //prevent duplicates
+                + "HAVING count(*) == :size "
+                + "ORDER BY link.lid desc"
+    )
+    suspend fun searchPublicLinksAndDomainsWithTagsByLinkNameAndTags(
+        keyword: String, tags: List<Int>, size: Int
+    ): List<SjLinksAndDomainsWithTags>
+
     // search link query by link name
     @Transaction
     @Query("SELECT * FROM SjLink WHERE name LIKE :keyword ORDER BY lid desc")
     suspend fun searchLinksAndDomainsWithTagsByLinkName(
+        keyword: String
+    ): List<SjLinksAndDomainsWithTags>
+
+    @Transaction
+    @Query("SELECT * FROM SjLink WHERE name LIKE :keyword AND lid NOT IN(SELECT ref.lid FROM LinkTagCrossRef as ref WHERE ref.tid NOT IN (SELECT tag.tid FROM SjTag as tag WHERE tag.gid NOT IN (SELECT g.gid FROM SjTagGroup as g WHERE is_private = 1))) ORDER BY lid desc")
+    suspend fun searchPublicLinksAndDomainsWithTagsByLinkName(
         keyword: String
     ): List<SjLinksAndDomainsWithTags>
 
@@ -247,6 +282,10 @@ interface SjDao {
     @Transaction
     @Query("SELECT * FROM SjLink WHERE Type = :type ORDER BY lid desc")
     fun getAllLinksByType(type: String): LiveData<List<SjLinksAndDomainsWithTags>>
+
+    @Transaction
+    @Query("SELECT * FROM SjLink WHERE Type = :type AND lid not in (SELECT ref.lid FROM LinkTagCrossRef as ref WHERE ref.tid NOT IN (SELECT tag.tid FROM SjTag as tag WHERE tag.gid NOT IN (SELECT g.gid FROM SjTagGroup as g WHERE is_private = 1))) ORDER BY lid desc")
+    fun getPublicLinksByType(type: String): LiveData<List<SjLinksAndDomainsWithTags>>
 
     @Query("SELECT * FROM SjTag WHERE gid = :gid ORDER BY name")
     fun getAllTagsByGid(gid: Int): LiveData<List<SjTag>>

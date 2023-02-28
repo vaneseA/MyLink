@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.CompoundButton
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.mylink.R
 import com.example.mylink.data.model.SjTag
@@ -12,11 +14,17 @@ import com.example.mylink.databinding.FragmentEditLinkBinding
 import com.example.mylink.ui.component.EditTagDialogFragment
 import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
+import com.example.mylink.viewmodel.SettingViewModel
 import com.example.mylink.viewmodel.edit_link.EditVideoViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class EditLinkAndVideoFragment : SjBasicFragment<FragmentEditLinkBinding>() {
 
     val viewModel: EditVideoViewModel by activityViewModels()
+    private val settingViewModel: SettingViewModel by viewModels()
 
     companion object {
         fun newInstance(lid: Int, url: String): EditLinkAndVideoFragment {
@@ -67,14 +75,21 @@ class EditLinkAndVideoFragment : SjBasicFragment<FragmentEditLinkBinding>() {
         })
 
         // set tagList
-        viewModel.tagGroups.observe(viewLifecycleOwner, {
-            if(viewModel.tagDefaultGroup.value!=null)
-                this.addTagsToChipGroupChildren(viewModel.tagDefaultGroup.value!!, it)
-        })
-        viewModel.tagDefaultGroup.observe(viewLifecycleOwner, {
-            if(viewModel.tagGroups.value!=null)
-                this.addTagsToChipGroupChildren(it, viewModel.tagGroups.value!!)
-        })
+        lifecycleScope.launch {
+            val isPrivateModeDeffer = async(Dispatchers.IO) { settingViewModel.privateFlow.first() }
+            val isPrivateMode = isPrivateModeDeffer.await()
+
+            val tagGroupsLiveData = if(isPrivateMode)viewModel.publicTagGroups
+            else viewModel.tagGroups
+            tagGroupsLiveData.observe(viewLifecycleOwner, {
+                if (viewModel.tagDefaultGroup.value != null)
+                    addTagsToChipGroupChildren(viewModel.tagDefaultGroup.value!!, it)
+            })
+            viewModel.tagDefaultGroup.observe(viewLifecycleOwner, {
+                if (tagGroupsLiveData.value != null)
+                    addTagsToChipGroupChildren(it, tagGroupsLiveData.value!!)
+            })
+        }
 
     }
 

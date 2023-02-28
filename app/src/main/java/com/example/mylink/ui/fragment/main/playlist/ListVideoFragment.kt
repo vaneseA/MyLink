@@ -3,6 +3,8 @@ package com.example.mylink.ui.fragment.main.playlist
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mylink.R
@@ -13,16 +15,22 @@ import com.example.mylink.ui.component.DataState
 import com.example.mylink.ui.component.ViewVisibilityUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.ui.fragment.main.search.detail_link.DetailLinkFragment
+import com.example.mylink.viewmodel.SettingViewModel
 import com.example.mylink.viewmodel.playlist.ListVideoViewModel
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.common.collect.ImmutableSet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 
 class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
     private val viewModel: ListVideoViewModel by activityViewModels()
+    private val settingViewModel: SettingViewModel by viewModels()
 
     // control view visibility
     private lateinit var viewUtil: ViewVisibilityUtil
@@ -73,15 +81,26 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
                 setMediaItemsAndPrepare(it)
             }
         })
-        viewModel.allVideoData.observe(viewLifecycleOwner, {
-            if (!it.isNullOrEmpty()) {
-                viewUtil.state = DataState.LOADING
-                viewModel.loadPlayList()
+        lifecycleScope.launch {
+            val isPrivateModeDeferred =
+                async(Dispatchers.IO) { settingViewModel.privateFlow.first() }
+            val isPrivateMode = isPrivateModeDeferred.await()
+            val videoDatas = if (isPrivateMode) {
+                viewModel.publicVideoDatas
             } else {
-                viewUtil.state = DataState.EMPTY
+                viewModel.videoDatas
             }
-            adapter.setList(it)
-        })
+            videoDatas.observe(viewLifecycleOwner, {
+                if (!it.isNullOrEmpty()) {
+                    viewUtil.state = DataState.LOADING
+                    viewModel.loadPlayList(isPrivateMode)
+                } else {
+                    viewUtil.state = DataState.EMPTY
+                }
+                adapter.setList(it)
+            })
+        }
+
     }
 
     override fun onStart() {
