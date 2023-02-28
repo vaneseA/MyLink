@@ -3,9 +3,11 @@ package com.example.mylink.ui.adapter.binding
 import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.example.mylink.data.model.FullNameTagValue
+import com.example.mylink.data.model.LinkDetailValue
 import com.example.mylink.data.model.SjTag
+import com.example.mylink.ui.component.SjPreview
 import com.example.mylink.ui.component.SjTagChip
+import com.example.mylink.ui.component.TagValue
 import com.google.android.material.chip.ChipGroup
 
 class DataBindingSjAdapter {
@@ -15,8 +17,9 @@ class DataBindingSjAdapter {
         fun setChipByList(view: ChipGroup, tags: List<SjTag>?) {
             view.removeAllViews()
             if (!tags.isNullOrEmpty()) {
-                for( tag in tags) {
-                    val chip = SjTagChip(view.context, tag)
+                for (tag in tags) {
+                    val chip = SjTagChip(view.context)
+                    chip.setTagValue(TagValue(tag))
                     chip.setViewMode()
                     view.addView(chip)
                 }
@@ -24,29 +27,34 @@ class DataBindingSjAdapter {
         }
 
         @JvmStatic
-        @BindingAdapter("chipValueList")
-        fun setChipByValueList(view: ChipGroup, tags: List<FullNameTagValue>?) {
-            view.removeAllViews()
-            if (!tags.isNullOrEmpty()) {
-                for(value in tags) {
-                    val chip = SjTagChip(view.context, value.tag)
-                    chip.setViewMode()
-                    chip.setText(value.fullName)
-                    view.addView(chip)
+        @BindingAdapter("visibilityByList")
+        fun setVisibilityByList(view: View, list: List<Any?>?) {
+            view.visibility =
+                when (list.isNullOrEmpty()) {
+                    true -> View.GONE
+                    false -> View.VISIBLE
                 }
-            }
         }
 
         @JvmStatic
-        @BindingAdapter("chipCheckableDataList")
-        fun setCheckableChipByList(view: ChipGroup, tags: List<SjTag>?) {
-            view.removeAllViews()
-            if (!tags.isNullOrEmpty()) {
-                for( tag in tags) {
-                    val chip = SjTagChip(view.context, tag)
-                    view.addView(chip)
+        @BindingAdapter("listEmptyView")
+        fun setEmptyViewByList(view: View, list: List<Any?>?) {
+            view.visibility =
+                when (list.isNullOrEmpty()) {
+                    true -> View.VISIBLE
+                    false -> View.GONE
                 }
-            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("previewContent")
+        fun setPreviewByLinkDetailValue(view: SjPreview, linkDetailValue: LinkDetailValue?) {
+            if (linkDetailValue != null)
+                view.setPreview(
+                    linkDetailValue.isVideo,
+                    linkDetailValue.fullUrl,
+                    linkDetailValue.preview
+                )
         }
 
         @JvmStatic

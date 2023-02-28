@@ -29,16 +29,16 @@ class ListDomainFragment : SjBasicFragment<FragmentListDomainBinding>() {
         binding.recyclerView.adapter = adapter
 
         // set domain item list
-        viewModel.domains.observe(
-            viewLifecycleOwner, {
-                if (it.isEmpty()) {
-                    binding.include.emptyView.visibility = View.VISIBLE
-                } else {
-                    binding.include.emptyView.visibility = View.GONE
-                }
-                adapter.setList(it)
-            }
-        )
+//        viewModel.domains.observe(
+//            viewLifecycleOwner, {
+//                if (it.isEmpty()) {
+//                    binding.include.emptyView.visibility = View.VISIBLE
+//                } else {
+//                    binding.include.emptyView.visibility = View.GONE
+//                }
+//                adapter.setList(it)
+//            }
+//        )
     }
 
 

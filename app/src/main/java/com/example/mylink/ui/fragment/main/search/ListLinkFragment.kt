@@ -1,12 +1,9 @@
 package com.example.mylink.ui.fragment.main.search
 
 import android.content.Intent
-import android.util.Log
-import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mylink.R
 import com.example.mylink.data.model.SjLinksAndDomainsWithTags
 import com.example.mylink.databinding.FragmentListLinkBinding
@@ -17,45 +14,45 @@ import com.example.mylink.ui.component.ViewVisibilityUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.ui.fragment.main.search.detail_link.DetailLinkFragment
 import com.example.mylink.viewmodel.SettingViewModel
-import com.example.mylink.viewmodel.search.ListMode
+import com.example.mylink.viewmodel.detail_link.DetailLinkViewModel
 import com.example.mylink.viewmodel.search.SearchLinkViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.first
 
 class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
     private val viewModel: SearchLinkViewModel by activityViewModels()
-    private val settingViewModel: SettingViewModel by viewModels()
+    private val settingViewModel: SettingViewModel by activityViewModels()
+
+    // fragments
+    private val detailFragment = DetailLinkFragment()
+    private val detailViewModel: DetailLinkViewModel by activityViewModels()
+    private val searchFragment = SearchFragment()
 
     // control view visibility
     private lateinit var viewUtil: ViewVisibilityUtil
 
-    // override methods
+    // for recyclerView
+    private lateinit var adapter: LinkSearchListAdapter
+    private lateinit var layoutManager: RecyclerView.LayoutManager
+
     override fun layoutId(): Int = R.layout.fragment_list_link
 
     override fun onStart() {
         super.onStart()
-        Log.d("onStart", "search start, shimmer started")
-        if (viewModel.mode == ListMode.MODE_SEARCH) {
-            viewUtil.state = DataState.LOADING
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (viewModel.mode == ListMode.MODE_SEARCH)
-            viewModel.searchLinkBySearchSet()
+        viewUtil.state = DataState.LOADING
+        viewModel.isPrivateMode=settingViewModel.isPrivateMode.value ?: false
+        viewModel.refreshData()
     }
 
     override fun onCreateView() {
         // set binding variable
         binding.viewModel = viewModel
 
+        settingViewModel.isPrivateMode.observe(viewLifecycleOwner){
+            viewModel.isPrivateMode = it
+        }
+
         // set recycler view
-        val adapter = LinkSearchListAdapter(
-            detailOperation = ::moveToDetailFragment
-        )
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        initRecyclerView()
 
         // set view Util
         viewUtil = ViewVisibilityUtil(
@@ -64,71 +61,49 @@ class ListLinkFragment : SjBasicFragment<FragmentListLinkBinding>() {
             emptyView = binding.emptyGroup
         )
 
-        // set list when Mode SEARCH
-        val searchLiveData = viewModel.searchLinkList
-        searchLiveData.observe(viewLifecycleOwner,
-            {
-                if (viewModel.mode == ListMode.MODE_SEARCH) {
-                    adapter.setList(it)
-                    delayAndViewVisibleControl(it)
-                }
-            }
-        )
-
-        lifecycleScope.launch {
-            val isPrivateModeDeferred =
-                async(Dispatchers.IO) { settingViewModel.privateFlow.first() }
-            val isPrivateMode = isPrivateModeDeferred.await()
-
-            // set list when Mode ALL
-            val allLiveData = if (isPrivateMode) viewModel.publicLinkList
-            else viewModel.linkList
-            allLiveData.observe(viewLifecycleOwner,
-                {
-                    if (viewModel.mode == ListMode.MODE_ALL) {
-                        adapter.setList(it)
-                        delayAndViewVisibleControl(it)
-                    }
-                }
-            )
-        }
-        viewModel.bindingTargetTags.observe(viewLifecycleOwner, {
-            if (it.isNullOrEmpty()) {
-                binding.cancelSearchSetImageView.visibility = View.GONE
-            } else {
-                binding.cancelSearchSetImageView.visibility = View.VISIBLE
-            }
-        })
-
         // handle user click event
-        binding.floatingActionView.setOnClickListener { startEditActivity() }
-        binding.searchEditText.setOnClickListener {
-            this.moveToSearchFragment()
-        }
-        binding.cancelSearchSetImageView.setOnClickListener {
-            viewModel.clearSearchSet()
+        setOnClickListeners()
+
+        // set adapter list
+        viewModel.links.observe(viewLifecycleOwner) {
+            if (it != null) setAdapterList(it)
         }
     }
 
-    private fun delayAndViewVisibleControl(dataList: List<SjLinksAndDomainsWithTags>) {
+    private fun setAdapterList(list: List<SjLinksAndDomainsWithTags>) {
         CoroutineScope(Dispatchers.Main).launch {
+            adapter.setList(list)
             delay(500)
-            if (dataList.isEmpty()) {
+            if (list.isEmpty()) {
                 viewUtil.state = DataState.EMPTY
-                Log.d("search ended", "empty")
             } else {
                 viewUtil.state = DataState.LOADED
-                Log.d("search ended", "list")
             }
         }
+    }
+
+    override fun initRecyclerView() {
+        this.adapter = LinkSearchListAdapter(detailOperation = ::moveToDetailFragment)
+        this.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.adapter = this.adapter
+        binding.recyclerView.layoutManager = this.layoutManager
+    }
+
+
+    // functions for user event
+    override fun setOnClickListeners() {
+        binding.floatingActionView.setOnClickListener { startEditActivity() }
+        binding.searchEditText.setOnClickListener { moveToSearchFragment() }
+        binding.cancelSearchSetImageView.setOnClickListener { viewModel.clearSearchSet() }
     }
 
     private fun moveToSearchFragment() {
-        moveToOtherFragment(SearchFragment())
+        moveToOtherFragment(searchFragment)
     }
 
     private fun moveToDetailFragment(lid: Int) {
-        moveToOtherFragment(DetailLinkFragment.newInstance(lid))
+        detailViewModel.lid = lid
+        moveToOtherFragment(detailFragment)
     }
 
     private fun startEditActivity() {

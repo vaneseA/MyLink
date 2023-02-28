@@ -1,43 +1,84 @@
 package com.example.mylink.ui.component
 
 import android.content.Context
+import android.util.AttributeSet
+import android.util.Log
 import com.example.mylink.data.model.SjTag
 import com.google.android.material.chip.Chip
 
-class SjTagChip(context: Context, val tag: SjTag) : Chip(context, null) {
+data class TagValue(
+    val tag: SjTag,
+    val groupName: String? = null
+)
 
-    init {
-        setText(tag.name)
-        setBasicMode()
-        isCheckedIconVisible = false
+class SjTagChip : Chip {
+    private lateinit var tagValue: TagValue
+    val tid get() = tagValue.tag.tid
+    val tag get() = tagValue.tag
 
+    constructor(context: Context?)
+            : super(context) {
+        init()
+    }
+
+    constructor(context: Context?, attrs: AttributeSet?)
+            : super(context, attrs) {
+        init()
+    }
+
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr) {
+        init()
+    }
+
+    private fun init() {
+        // apply style
         CustomComponentStyleUtil.setMaterialCustomChipStyle(this)
     }
 
-    fun setBasicMode() {
-        isCheckable = true
-        id = tag.tid
+    fun setTagValue(tagValue: TagValue) {
+        this.tagValue = tagValue
+        val chipName =
+            if (!tagValue.groupName.isNullOrEmpty()) {
+                "${tagValue.groupName}: ${tagValue.tag.name}"
+            } else {
+                tagValue.tag.name
+            }
+        setText(chipName)
     }
+
+    // no interaction chip Mode
 
     fun setViewMode() {
-        isClickable = false
+        Log.d("setViewModeChip", "viewMode on")
+        isCheckedIconVisible = false
+        isCheckable = true
         isChecked = true
         isCheckable = false
+        isClickable = false
     }
 
-    fun setEditMode(
+    // only checkable chip Mode
+    fun setCheckableMode(
+        onCheckedChangeListener: OnCheckedChangeListener, checked : Boolean
+    ) {
+        isCheckedIconVisible = false
+        isCheckable = true
+        isChecked = checked
+        id = tagValue.tag.tid
+        setOnCheckedChangeListener(onCheckedChangeListener)
+    }
+
+    // deletable and long-clickable and deletable Chip Mode
+    fun setDeletableAndLongClickableMode(
         deleteOperation: (SjTag) -> Unit,
-        editOperation: (SjTag) -> Unit
+        longClickOperation: (SjTag) -> Unit
     ) {
         isCheckable = false
         isCloseIconVisible = true
-        setOnCloseIconClickListener {
-            deleteOperation(tag)
-        }
-        setOnLongClickListener {
-            editOperation(tag)
-            true
-        }
+        setOnCloseIconClickListener { if (it is SjTagChip) deleteOperation(it.tag) }
+        setOnLongClickListener { if (it is SjTagChip) longClickOperation(it.tag); true }
     }
+
 
 }

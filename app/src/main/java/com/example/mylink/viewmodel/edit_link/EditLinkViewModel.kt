@@ -2,22 +2,33 @@ package com.example.mylink.viewmodel.edit_link
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mylink.data.model.*
 import com.example.mylink.data.repository.SjNetworkRepository
+import com.example.mylink.data.repository.room.SjLinkRepository
+import com.example.mylink.data.repository.room.SjTagRepository
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
+import com.example.mylink.viewmodel.basic.SjBaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class EditVideoViewModel : BasicViewModelWithRepository() {
+class EditLinkViewModel : SjBaseViewModel() {
     // repo
+    private val tagRepo = SjTagRepository.getInstance()
+    private val linkRepo = SjLinkRepository.getInstance()
     private val networkRepository = SjNetworkRepository.newInstance()
 
+    var lid: Int? = null
+        set(value) {
+            field = value
+            refreshData()
+        }
+
     // model list
-    val tagGroups = repository.tagGroups
-    val publicTagGroups = repository.publicTagGroups
-    val tagDefaultGroup = repository.defaultTagGroup
+    val tagGroups = tagRepo.tagGroupsWithoutDefault
+    val tagDefaultGroup = tagRepo.defaultTagGroup
 
     // default type
     private val defaultType = ELinkType.link
@@ -50,6 +61,14 @@ class EditVideoViewModel : BasicViewModelWithRepository() {
         }
     }
 
+    override fun refreshData() {
+        if (isPrivateMode) {
+            tagRepo.postTagGroupsPublicNotDefault()
+        } else {
+            tagRepo.postTagGroupsNotDefault()
+        }
+    }
+
     // when create new with url address
     fun createLinkByUrl(url: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,15 +87,13 @@ class EditVideoViewModel : BasicViewModelWithRepository() {
                 targetLink.preview = preview
                 _previewImage.postValue(preview)
             }
-
-            // 아이콘 불러오기
         }
     }
 
     // when updating existing SjLink
     fun setLinkByLid(lid: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val link = async { repository.getLinkAndDomainWithTagsByLid(lid) }
+            val link = async { linkRepo.selectLinkByLid(lid) }
             setData(link.await())
         }
     }
@@ -105,23 +122,26 @@ class EditVideoViewModel : BasicViewModelWithRepository() {
     }
 
     fun createTag(name: String) {
-        repository.insertTag(SjTag(name = name))
+        tagRepo.insertTag(name)
     }
 
 
     // handle tag selection
-    fun selectTag(tag: SjTag) = targetTags.add(tag)
-    fun unselectTag(tag: SjTag) = targetTags.remove(tag)
+    fun selectTag(tag: SjTag)=targetTags.add(tag)
+    fun unselectTag(tag: SjTag) =targetTags.remove(tag)
     fun isTagSelected(tag: SjTag) = targetTags.contains(tag)
 
 
     // save link
     fun saveVideo() {
-        if (targetLink.lid != 0) {
-            repository.updateLinkAndTags(targetDomain, targetLink, targetTags)
-        } else {
-            repository.insertLinkAndTags(targetDomain, targetLink, targetTags)
+        viewModelScope.launch {
+            if (targetLink.lid != 0) {
+                linkRepo.updateLinkAndTags(targetDomain, targetLink, targetTags)
+            } else {
+                linkRepo.insertLinkAndTags(targetDomain, targetLink, targetTags)
+            }
         }
+
     }
 
 

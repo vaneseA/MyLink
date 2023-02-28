@@ -3,7 +3,7 @@ package com.example.mylink.data.db
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
-import com.example.mylink.data.dao.SjDao
+import com.example.mylink.data.dao.*
 
 class SjDatabaseUtil {
     companion object {
@@ -44,6 +44,41 @@ class SjDatabaseUtil {
                 throw Exception("Database is not yet initialized")
             }
             return this.db.getDao()
+        }
+
+        fun getLinkDao(): SjLinkDao {
+            if (!this::db.isInitialized) {
+                throw Exception("Database is not yet initialized")
+            }
+            return this.db.getLinkDao()
+        }
+
+        fun getCountDao(): SjCountDao {
+            if (!this::db.isInitialized) {
+                throw Exception("Database is not yet initialized")
+            }
+            return this.db.getCountDao()
+        }
+
+        fun getSearchSetDao(): SjSearchSetDao {
+            if (!this::db.isInitialized) {
+                throw Exception("Database is not yet initialized")
+            }
+            return this.db.getSearchSetDao()
+        }
+
+        fun getTagDao(): SjTagDao {
+            if (!this::db.isInitialized) {
+                throw Exception("Database is not yet initialized")
+            }
+            return this.db.getTagDao()
+        }
+
+        fun getDomainDao(): SjDomainDao{
+            if (!this::db.isInitialized) {
+                throw Exception("Database is not yet initialized")
+            }
+            return this.db.getDomainDao()
         }
 
     }

@@ -1,14 +1,13 @@
 package com.example.mylink.ui.fragment.main.search
 
+import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mylink.R
@@ -20,14 +19,11 @@ import com.example.mylink.ui.component.SjTagChip
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.viewmodel.SettingViewModel
 import com.example.mylink.viewmodel.search.SearchLinkViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
-    val viewModel: SearchLinkViewModel by activityViewModels()
-    private val settingViewModel: SettingViewModel by viewModels()
+    private val viewModel: SearchLinkViewModel by activityViewModels()
+    private val settingViewModel: SettingViewModel by activityViewModels()
+    private lateinit var adapter: SearchSetAdapter
 
     // drawable resources
     private val deleteIcon by lazy {
@@ -43,19 +39,56 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         )
     }
 
+    private val onCheckedListener =
+        CompoundButton.OnCheckedChangeListener { btn, isChecked ->
+            val chip = btn as SjTagChip
+            if (isChecked) {
+                viewModel.addTag(chip.tag)
+                binding.searchImageView.setImageDrawable(searchIcon)
+            } else {
+                viewModel.removeTag(chip.tag)
+                if (viewModel.isSearchSetEmpty()) {
+                    binding.searchImageView.setImageDrawable(deleteIcon)
+                }
+            }
+        }
 
-    private fun selectLiveDataBySettingValue(isPrivateMode: Boolean): LiveData<List<SjTagGroupWithTags>> {
-        return if (isPrivateMode) viewModel.publicTagGroups
-        else viewModel.tagGroups
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (viewModel.isSearchSetEmpty()) {
+                viewModel.initValuesAndSetModeAll()
+            } else {
+                viewModel.startSearchAndSaveIfNotEmpty()
+            }
+            popBack()
+        }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
 
-    // override methods
+    override fun onDetach() {
+        super.onDetach()
+        onBackPressedCallback.remove()
+    }
+
     override fun layoutId(): Int = R.layout.fragment_search
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.isPrivateMode = settingViewModel.isPrivateMode.value!!
+        viewModel.refreshData()
+    }
 
     override fun onCreateView() {
         //set binding
         binding.viewModel = viewModel
+
+        settingViewModel.isPrivateMode.observe(viewLifecycleOwner) {
+            viewModel.isPrivateMode = it
+        }
 
         // set auto focus on Search Field
         binding.searchEditText.requestFocus()
@@ -65,9 +98,43 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
         binding.emptyTagGroup.visibility = View.GONE
 
         // set recyclerview search set
+        initRecyclerView()
+
+        viewModel.tagGroups.observe(viewLifecycleOwner) {
+            setTagList(viewModel.defaultTags.value, it)
+        }
+        viewModel.defaultTags.observe(viewLifecycleOwner) {
+            setTagList(it, viewModel.tagGroups.value)
+        }
+        viewModel.bindingSearchTags.observe(viewLifecycleOwner) {
+            setTagList(viewModel.defaultTags.value, viewModel.tagGroups.value)
+        }
+
+        // user input enter(action search) -> search start.
+        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                searchAndPopBack()
+            }
+            false
+        }
+
+        // user input -> set search icon
+        viewModel.bindingSearchWord.observe(viewLifecycleOwner) {
+            if (it.isNullOrEmpty() && viewModel.isSearchSetEmpty()) {
+                binding.searchImageView.setImageDrawable(deleteIcon)
+            } else {
+                binding.searchImageView.setImageDrawable(searchIcon)
+            }
+        }
+
+        setOnClickListeners()
+    }
+
+
+    override fun initRecyclerView() {
         binding.recentSearchedRecyclerView.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        val adapter = SearchSetAdapter(::setSearch, ::searchAndPopBack)
+        this.adapter = SearchSetAdapter(::setSearch, ::searchAndPopBack)
         binding.recentSearchedRecyclerView.addItemDecoration(
             object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
@@ -83,134 +150,55 @@ class SearchFragment : SjBasicFragment<FragmentSearchBinding>() {
                 }
             }
         )
-        binding.recentSearchedRecyclerView.adapter = adapter
-
-
-
-        lifecycleScope.launch {
-            val isPrivateModeDeffer = async(Dispatchers.IO) { settingViewModel.privateFlow.first() }
-            val isPrivateMode = isPrivateModeDeffer.await()
-            viewModel.isPrivateMode = isPrivateMode
-
-            // set tag list
-            val tagGroupsLiveData =
-                selectLiveDataBySettingValue(isPrivateMode)
-            tagGroupsLiveData.observe(viewLifecycleOwner, {
-                if (viewModel.tagDefaultGroup.value != null)
-                    setTagList(viewModel.tagDefaultGroup.value!!, it)
-            })
-            viewModel.tagDefaultGroup.observe(viewLifecycleOwner, {
-                if (tagGroupsLiveData.value != null)
-                    setTagList(it, tagGroupsLiveData.value!!)
-            })
-            viewModel.bindingTargetTags.observe(viewLifecycleOwner, {
-                if (tagGroupsLiveData.value != null && viewModel.tagDefaultGroup.value != null)
-                    setTagList(viewModel.tagDefaultGroup.value!!, tagGroupsLiveData.value!!)
-            })
-
-            // set searchSet list
-            val searchSetsLiveData =
-                if (isPrivateMode) {
-                    viewModel.publicSearchList
-                } else viewModel.searchList
-            searchSetsLiveData.observe(viewLifecycleOwner,
-                {
-                    if (it.isNullOrEmpty()) {
-                        binding.emptySearchSetGroup.visibility = View.VISIBLE
-                    } else {
-                        binding.emptySearchSetGroup.visibility = View.GONE
-                    }
-                    adapter.setList(it)
-                }
-            )
+        binding.recentSearchedRecyclerView.adapter = this.adapter
+        viewModel.bindingSearchSets.observe(viewLifecycleOwner) {
+            adapter.setList(it)
         }
-
-        // user input enter(action search) -> search start.
-        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                searchAndPopBack()
-            }
-            false
-        }
-
-        // user input -> set search icon
-        viewModel.bindingSearchWord.observe(viewLifecycleOwner, {
-            if (it.isNullOrEmpty() && viewModel.isSearchSetEmpty()) {
-                binding.searchImageView.setImageDrawable(deleteIcon)
-            } else {
-                binding.searchImageView.setImageDrawable(searchIcon)
-            }
-        })
-
-        // click search Icon -> search start.
-        binding.searchImageView.setOnClickListener {
-            searchAndPopBack()
-        }
-
-
-        // handle user click event
-        val onClickListener = View.OnClickListener { deleteAllSearchSet() }
-        binding.deleteImageView.setOnClickListener(onClickListener)
-        binding.deleteTextView.setOnClickListener(onClickListener)
     }
 
     private fun setTagList(
-        defaultGroup: SjTagGroupWithTags,
-        groups: List<SjTagGroupWithTags>
+        defaultGroup: SjTagGroupWithTags?,
+        groups: List<SjTagGroupWithTags>?
     ) {
-        if (groups.isNullOrEmpty() && defaultGroup.tags.isEmpty()) {
+        if (groups.isNullOrEmpty() && defaultGroup != null) {
             binding.emptyTagGroup.visibility = View.VISIBLE
         } else {
             binding.emptyTagGroup.visibility = View.GONE
         }
-        val onCheckedListener =
-            CompoundButton.OnCheckedChangeListener { btn, isChecked ->
-                val chip = btn as SjTagChip
-                if (isChecked) {
-                    viewModel.addTag(chip.tag)
-                    binding.searchImageView.setImageDrawable(searchIcon)
-                } else {
-                    viewModel.removeTag(chip.tag)
-                    if (viewModel.isSearchSetEmpty()) {
-                        binding.searchImageView.setImageDrawable(deleteIcon)
-                    }
-                }
-            }
 
-        binding.tagChipGroup.removeAllViews()
-        for (def in defaultGroup.tags) {
-            val chip = SjTagChip(requireContext(), def)
-            chip.isChecked = viewModel.containsTag(def)
-            chip.setOnCheckedChangeListener(onCheckedListener)
-            binding.tagChipGroup.addView(chip)
-        }
-        for (group in groups) {
-            for (tag in group.tags) {
-                val chip = SjTagChip(requireContext(), tag)
-                chip.isChecked = viewModel.containsTag(tag)
-                chip.setOnCheckedChangeListener(onCheckedListener)
-                chip.setText("${group.tagGroup.name}: ${tag.name}")
-                binding.tagChipGroup.addView(chip)
-            }
-        }
+        setTagsToChipGroupChildren(
+            defaultGroup,
+            groups,
+            ::isTagSelected,
+            binding.tagChipGroup,
+            onCheckedListener
+        )
     }
 
+    private fun isTagSelected(tag: SjTag) = viewModel.containsTag(tag)
 
-    // search methods
-    private fun setSearch(keyword: String, tags: List<SjTag>) {
-        viewModel.bindingSearchWord.postValue(keyword)
-        viewModel.setTags(tags)
+
+    // handle user click methods
+    override fun setOnClickListeners() {
+        val onClickListener = View.OnClickListener { deleteAllSearchSet() }
+        binding.deleteImageView.setOnClickListener(onClickListener)
+        binding.deleteTextView.setOnClickListener(onClickListener)
+
+        // click search Icon -> search start.
+        binding.searchImageView.setOnClickListener { searchAndPopBack() }
     }
+
+    private fun setSearch(keyword: String, tags: List<SjTag>) =
+        viewModel.setSearch(keyword,tags)
+
+    private fun deleteAllSearchSet() =
+        viewModel.deleteAllSearchSet()
 
     private fun searchAndPopBack() {
-        viewModel.searchLinkBySearchSetAndSave()
+        viewModel.startSearchAndSaveIfNotEmpty()
         popBack()
     }
 
-    //handle user click methods
-    private fun deleteAllSearchSet() {
-        viewModel.deleteAllSearch()
-    }
 
 }
 

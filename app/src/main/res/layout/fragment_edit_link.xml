@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.mylink.viewmodel.edit_link.EditVideoViewModel" />
+            type="com.example.mylink.viewmodel.edit_link.EditLinkViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

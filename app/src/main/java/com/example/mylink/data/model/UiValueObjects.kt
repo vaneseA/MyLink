@@ -1,5 +1,7 @@
 package com.example.mylink.data.model
 
+import com.example.mylink.ui.component.SjUtil
+
 data class SettingItemValue(
     val name: String,
     val open: () -> Unit
@@ -15,11 +17,6 @@ data class LinkDetailValue(
     val tags: List<SjTag>
 )
 
-data class FullNameTagValue(
-    val tag: SjTag,
-    val fullName: String
-)
-
 data class VideoData(
     val lid: Int = 0,
     val url: String,
@@ -27,5 +24,19 @@ data class VideoData(
     val thumbnail: String,
     val isYoutubeVideo: Boolean,
     val tagList: List<SjTag>
-)
+) {
+    companion object {
+        fun getVideoDataBy(link: SjLinksAndDomainsWithTags): VideoData {
+            val fullUrl = LinkModelUtil.getFullUrl(link)
+            return VideoData(
+                link.link.lid,
+                fullUrl,
+                link.link.name,
+                link.link.preview,
+                SjUtil.checkYoutubePrefix(fullUrl),
+                link.tags
+            )
+        }
+    }
+}
 

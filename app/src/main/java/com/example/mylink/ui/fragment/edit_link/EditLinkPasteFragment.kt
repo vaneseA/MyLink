@@ -3,14 +3,18 @@ package com.example.mylink.ui.fragment.edit_link
 import android.content.ClipDescription
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import com.example.mylink.R
 import com.example.mylink.databinding.FragmentEditPasteBinding
 import com.example.mylink.ui.component.LinkPasteBottomSheet
 import com.example.mylink.ui.component.SjClipboard
 import com.example.mylink.ui.component.SjUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
+import com.example.mylink.viewmodel.edit_link.EditLinkViewModel
 
 class EditLinkPasteFragment : SjBasicFragment<FragmentEditPasteBinding>() {
+    private val editFragment = EditLinkFragment()
+    private val editViewModel: EditLinkViewModel by activityViewModels()
 
     private var bottomSheet :LinkPasteBottomSheet? = null
 
@@ -60,7 +64,8 @@ class EditLinkPasteFragment : SjBasicFragment<FragmentEditPasteBinding>() {
     private fun moveToPreviewFragment(text: String) {
         if (SjUtil.checkUrlPrefix(text)) {
             bottomSheet?.dismiss()
-            moveToOtherFragment(EditLinkAndVideoFragment.newInstance(-1, text))
+            editViewModel.createLinkByUrl(text)
+            moveToOtherFragment(editFragment)
         } else {
             Toast.makeText(requireContext(), "url 형식이 아닙니다.", Toast.LENGTH_LONG).show()
         }

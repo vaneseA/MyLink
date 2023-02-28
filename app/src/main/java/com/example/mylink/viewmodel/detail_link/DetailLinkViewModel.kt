@@ -1,35 +1,42 @@
 package com.example.mylink.viewmodel.detail_link
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.mylink.data.model.*
+import com.example.mylink.data.repository.room.SjLinkRepository
 import com.example.mylink.viewmodel.basic.BasicViewModelWithRepository
+import com.example.mylink.viewmodel.basic.SjBaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailLinkViewModel : BasicViewModelWithRepository() {
+class DetailLinkViewModel : SjBaseViewModel() {
+    private val linkRepo = SjLinkRepository.getInstance()
+
+    var lid: Int? = null
+        set(data) {
+            field = data
+            refreshData()
+        }
+
     private var _link = MutableLiveData<LinkDetailValue>()
     val link: LiveData<LinkDetailValue> get() = _link
 
     // binding variables
-    private val _bindingLinkName = MutableLiveData("")
-    private val _bindingFullUrl = MutableLiveData("")
-    private val _bindingTags = MutableLiveData<List<SjTag>>(listOf())
-    val bindingLinkName: LiveData<String> get() = _bindingLinkName
-    val bindingTags: LiveData<List<SjTag>> get() = _bindingTags
-    val bindingFullUrl: LiveData<String> get() = _bindingFullUrl
+    val bindingLinkName: LiveData<String> = Transformations.map(link) { it.name }
+    val bindingTags: LiveData<List<SjTag>> = Transformations.map(link) { it.tags }
+    val bindingFullUrl: LiveData<String> = Transformations.map(link) { it.fullUrl }
 
-    fun loadLinkData(lid: Int) {
+
+    override fun refreshData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val data = repository.getLinkDetailDataByLid(lid)
-            _bindingFullUrl.postValue(data.fullUrl)
-            _bindingLinkName.postValue(data.name)
-            _bindingTags.postValue(data.tags)
+            val data = linkRepo.selectLinkValueByLid(lid!!)
             _link.postValue(data)
         }
     }
 
-    fun deleteLink() = repository.deleteLinkByLid(link.value!!.lid)
+    fun deleteLink() {
+        linkRepo.deleteLinkByLid(lid!!)
+    }
+
+
 }

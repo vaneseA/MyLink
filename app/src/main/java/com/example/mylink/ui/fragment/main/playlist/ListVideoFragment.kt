@@ -16,6 +16,7 @@ import com.example.mylink.ui.component.ViewVisibilityUtil
 import com.example.mylink.ui.fragment.basic.SjBasicFragment
 import com.example.mylink.ui.fragment.main.search.detail_link.DetailLinkFragment
 import com.example.mylink.viewmodel.SettingViewModel
+import com.example.mylink.viewmodel.detail_link.DetailLinkViewModel
 import com.example.mylink.viewmodel.playlist.ListVideoViewModel
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
@@ -28,9 +29,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
+// FIXME 스크롤 내릴 때는 괜찮은데 올릴 때 오류남.
 class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
     private val viewModel: ListVideoViewModel by activityViewModels()
     private val settingViewModel: SettingViewModel by viewModels()
+
+    private val detailFragment : DetailLinkFragment = DetailLinkFragment()
+    private val detailViewModel : DetailLinkViewModel by activityViewModels()
 
     // control view visibility
     private lateinit var viewUtil: ViewVisibilityUtil
@@ -46,6 +51,10 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
         // set toolbar
         val handlerMap = hashMapOf<Int, () -> Unit>(R.id.menu_playlist to ::moveToPlaylistFragment)
         binding.toolbar.setMenu(R.menu.toolbar_menu_video_list, handlerMap = handlerMap)
+
+        settingViewModel.isPrivateMode.observe(viewLifecycleOwner){
+            viewModel.isPrivateMode = it
+        }
 
         // player
         _player = ExoPlayer.Builder(requireContext()).build()
@@ -75,36 +84,28 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
 
 
         // set view by liveData
-        viewModel.playList.observe(viewLifecycleOwner, {
+        viewModel.playList.observe(viewLifecycleOwner) {
             if (adapter.itemCount != 0) {
                 viewUtil.state = DataState.LOADED
                 setMediaItemsAndPrepare(it)
             }
-        })
-        lifecycleScope.launch {
-            val isPrivateModeDeferred =
-                async(Dispatchers.IO) { settingViewModel.privateFlow.first() }
-            val isPrivateMode = isPrivateModeDeferred.await()
-            val videoDatas = if (isPrivateMode) {
-                viewModel.publicVideoDatas
+        }
+
+        viewModel.videoDatas.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                viewUtil.state = DataState.LOADING
             } else {
-                viewModel.videoDatas
+                viewUtil.state = DataState.EMPTY
             }
-            videoDatas.observe(viewLifecycleOwner, {
-                if (!it.isNullOrEmpty()) {
-                    viewUtil.state = DataState.LOADING
-                    viewModel.loadPlayList(isPrivateMode)
-                } else {
-                    viewUtil.state = DataState.EMPTY
-                }
-                adapter.setList(it)
-            })
+            adapter.setList(it)
         }
 
     }
 
     override fun onStart() {
         super.onStart()
+        viewModel.refreshData()
+        viewModel.isPrivateMode = settingViewModel.isPrivateMode.value ?: false
         binding.videoRecyclerView.scrollToPosition(0)
     }
 
@@ -158,7 +159,8 @@ class ListVideoFragment : SjBasicFragment<FragmentListVideoBinding>() {
     }
 
     private fun moveToDetailFragment(lid: Int) {
-        moveToOtherFragment(DetailLinkFragment.newInstance(lid))
+        detailViewModel.lid = lid
+        moveToOtherFragment(detailFragment)
     }
 
     private fun moveToPlaylistFragment() {

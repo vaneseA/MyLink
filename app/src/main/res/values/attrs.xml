@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CustomBasicToolbar">
-        <attr name ="toolbarTitle" format="string"/>
+        <attr name="toolbarTitle" format="string" />
         <attr name="android:fontFamily">@font/jalnanche</attr>
         <attr name="android:textColor">@android:color/white</attr>
     </declare-styleable>
+    <declare-styleable name="SjPreview">
+        <attr name="isVideo" format="boolean" />
+        <attr name="contentUrl" format="string" />
+        <attr name="previewUrl" format="string" />
+    </declare-styleable>
+
 </resources>

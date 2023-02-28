@@ -15,6 +15,7 @@
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/emptyGroup"
+            listEmptyView="@{viewModel.bindingTagGroups}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="emptyImageView,emptyTextView,emptyAddImageView,emptyAddGroupTextView" />

@@ -37,7 +37,7 @@ class EditDomainFragment : SjBasicFragment<FragmentEditDomainBinding>() {
     // load and set update data
     private fun loadUpdateData(arguments: Bundle) {
         val did = arguments.getInt("did")
-        viewModel.setDomain(did)
+        viewModel.did = did
     }
 
 

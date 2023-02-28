@@ -2,6 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.mylink.viewmodel.tag.TagGroupEditViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -59,6 +65,7 @@
             android:id="@+id/emptyGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:listEmptyView="@{viewModel.bindingTags}"
             app:constraint_referenced_ids="emptyImageView,emptyTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

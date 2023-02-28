@@ -13,7 +13,6 @@ import com.example.mylink.viewmodel.search.SearchLinkViewModel
 
 
 class MainActivity : SjBasicActivity<ActivityMainBinding>() {
-    val viewModel: SearchLinkViewModel by viewModels()
 
     // 바텀 내비에 따라 부착할 fragment들.
     private val linkFragment = ListLinkFragment()
